@@ -439,7 +439,7 @@ public class TextoNumero {
                     a = -1;
                     
                 } catch(NumberFormatException e) {
-                    //buscar en monedas para quitarlos
+                    //buscar en monedas para quitarlos textos de monedas
                     if(textos[a].equals(Op.quitaTildes(tipoMonedaEnteros.toLowerCase())) || textos[a].equals(Op.quitaTildes(tipoMonedaEnterosPlural.toLowerCase())) || textos[a].equals(tipoMonedaCentimos.toLowerCase()) || textos[a].equals(Op.quitaTildes(tipoMonedaCentimosPlural.toLowerCase())))
                         textosAEliminar.add(textos[a]);
                     else
@@ -578,13 +578,11 @@ public class TextoNumero {
         String monedaCentimos = "";
         String[] enteroDecimal = numeroAConvertir.toString().split("\\.");
 
-//        if(esMoneda || redondeoDecimales != 0) {
         if(redondeoDecimales != 0) {
             if(enteroDecimal[1] == null || enteroDecimal[1].equals(""))
                 enteroDecimal[1] = "0";
-//            numeroAConvertir = numeroAConvertir.setScale(redondeoDecimales == 0 ? enteroDecimal[1].length() : (redondeoDecimales > enteroDecimal[1].length() ? enteroDecimal[1].length() : redondeoDecimales), RoundingMode.HALF_UP);
-            numeroAConvertir = numeroAConvertir.setScale(redondeoDecimales > enteroDecimal[1].length() ? enteroDecimal[1].length() : redondeoDecimales, RoundingMode.HALF_UP);
 
+            numeroAConvertir = numeroAConvertir.setScale(redondeoDecimales > enteroDecimal[1].length() ? enteroDecimal[1].length() : redondeoDecimales, RoundingMode.HALF_UP);
             enteroDecimal = numeroAConvertir.toString().split("\\.");
         }
 
@@ -597,8 +595,7 @@ public class TextoNumero {
 
         BigInteger bigIntegerEurosParteEntera = convierteTextoANumero(valor[0], false);
         BigInteger bigIntegerEurosParteDecimal = BigInteger.ONE;
-//        
-//        for(int a = 0; a < bigIntegerEurosParteDecimal.toString().length(); a++)
+
         try {
             bigIntegerEurosParteDecimal = convierteTextoANumero(valor[1], true);
         } catch(IndexOutOfBoundsException e) {
@@ -615,7 +612,6 @@ public class TextoNumero {
             if(donde >= numeroTmp.indexOf(BigInteger.valueOf(1000000)))
                 monedaTmp = " de ";
 
-//            monedaEnteros = monedaTmp.concat(tipoMonedaEnteros).concat(bigIntegerEurosParteEntera.compareTo(BigInteger.ONE) == 0 ? "" : "s");
             monedaEnteros = monedaTmp.concat(bigIntegerEurosParteEntera.compareTo(BigInteger.ONE) == 0 ? tipoMonedaEnteros : tipoMonedaEnterosPlural);
             monedaCentimos = " ".concat(bigIntegerEurosParteDecimal.compareTo(BigInteger.ONE) == 0 ? tipoMonedaCentimos : tipoMonedaCentimosPlural);
         }
@@ -640,8 +636,7 @@ public class TextoNumero {
         String textoTmp = "";
         ArrayList<String> texto = getTexto(false);
         ArrayList<BigInteger> numero = getNumero(false);
-        BigInteger multiplicarTotal = BigInteger.ONE;
-        int multiplicar = 1;
+        BigInteger multiplicarTotal = BigInteger.ONE;        
         int contaTotal = 1;
         String textoMiles = "";
         int dondeMilTotal = 0;
@@ -717,10 +712,6 @@ public class TextoNumero {
             }
 
             multiplicarTotal = multiplicarTotal.multiply(BigInteger.valueOf(10));
-            multiplicar *= 10;
-
-            if(contaTotal % 6 == 0)
-                multiplicar = 1;
 
             if(contaTotal % 3 == 0)
                 esMiles = !esMiles;
@@ -731,14 +722,11 @@ public class TextoNumero {
         if(textoFinal.equals(""))
             textoFinal = texto.get(numero.indexOf(BigInteger.ZERO));
 
-//            textoFinal = texto.get(numero.indexOf(BigInteger.ZERO) + 1);
-
         if(esNegativo && !textoFinal.equals(""))
             textoFinal = "menos ".concat(textoFinal);
 
-        if(esMoneda && textoFinal.endsWith(texto.get(dondeUno))) {
-            textoFinal = cambiaUnoFinal(textoFinal, "", texto.size());
-        }
+        if(esMoneda && textoFinal.endsWith(texto.get(dondeUno))) 
+            textoFinal = cambiaUnoFinal(textoFinal, "", texto.size());        
 
         return textoFinal;
     }
@@ -782,7 +770,6 @@ public class TextoNumero {
 
     private String convierteTresDigitosATexto(String textoAConvertir)  {
         String textoFinal = "";
-//        String textoAConvertir = numeroAConvertir.toString();
         int multiplicar = 1;
         ArrayList<String> texto = getTexto(false);
         ArrayList<BigInteger> numero = getNumero(false);
@@ -802,7 +789,6 @@ public class TextoNumero {
         for(int a = textoAConvertir.length() - 1; a >= 0; a--)  {
             int tmpInt = 0;
             int donde = 0;
-//            String textoMiles = "";
 
             if(multiplicar == 10) {
                 tmpInt = Integer.parseInt(textoAConvertir.substring(a, a + 2));                
@@ -828,54 +814,16 @@ public class TextoNumero {
         return textoFinal;
     }
 
-//    private boolean sonDigitosUnitarios(BigInteger entrada) {
-//        boolean sonDigitosUnitarios = true;
-//        ArrayList<String> texto = getTexto(true);
-//        ArrayList<BigInteger> numero = getNumero(true);
-//        String textos = entrada.toString();
-//
-//        try {
-//            for(int a = 0; a < textos.length(); a++) {
-//                if(numero.get(texto.indexOf(String.valueOf(textos.charAt(a)))).toString().length() != 1) {
-//                    sonDigitosUnitarios = false;
-//                    break;
-//                }
-//            }
-//        } catch(IndexOutOfBoundsException e) {
-//            sonDigitosUnitarios = false;
-//        }
-//        return sonDigitosUnitarios;
-//    }
-
     private String dameTextoDigitosUnitarios(BigInteger entrada, boolean esNegativo) throws Exception {
         ArrayList<String> texto = getTexto(true);
         ArrayList<BigInteger> numero = getNumero(true);
         String textos = entrada.abs().toString();
         String textoFinal = "";
-//        ArrayList<String> signos = new ArrayList<>(Arrays.asList(new String[]{"-", ".", ","}));
-//        ArrayList<String> signosLetra = new ArrayList<>(Arrays.asList(new String[]{"menos", "punto", "coma"}));
 
-        for(int a = 0; a < textos.length(); a++) {
-//            boolean siguienteBusqueda = false;
-
-//            try {
-                textoFinal = textoFinal.concat(texto.get(numero.indexOf(new BigInteger(String.valueOf(textos.charAt(a)))))).concat(" ");
-//            } catch(NumberFormatException e) {
-//                siguienteBusqueda = true;
-//            } catch(IndexOutOfBoundsException e) {
-//                siguienteBusqueda = true;
-//            }
-//            if(siguienteBusqueda) {
-//                int donde = signos.indexOf(String.valueOf(textos.charAt(a)));
-//                if(donde == -1)
-//                    throw new Exception("Caracter no reconocido: " + textos.charAt(a));
-//
-//                textoFinal = textoFinal.concat(signosLetra.get(donde)).concat(" ");
-//            }
-        }
+        for(int a = 0; a < textos.length(); a++) 
+            textoFinal = textoFinal.concat(texto.get(numero.indexOf(new BigInteger(String.valueOf(textos.charAt(a)))))).concat(" ");
 
         return (esNegativo ? "menos " : "").concat(textoFinal.trim());
-
     }
 
     private String dameTextoDigitosUnitarios(BigDecimal entrada) throws Exception {        

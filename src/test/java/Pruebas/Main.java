@@ -16,14 +16,23 @@ public class Main {
     public Main() {
     }
     
-    
-    
     public static void main (String[] arg)  {
         TextoNumero textoNumero = new TextoNumero();
         try {
+            
+            String texto = textoNumero.toString(45.89);
+            System.out.println(texto);
+            
             textoNumero.setMoneda("ES");
-            String holas = textoNumero.toString(45.89);
-            System.out.println(holas);
+            texto = textoNumero.toString(45.846);
+            System.out.println(texto);
+            
+            double d = textoNumero.doubleValue(texto);
+            System.out.println(d);
+            
+            textoNumero.anularMoneda();
+            texto = textoNumero.toString(239273947.45);
+            System.out.println(texto);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

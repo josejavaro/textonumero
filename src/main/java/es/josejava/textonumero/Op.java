@@ -443,9 +443,7 @@ public class Op {
 //
 //        texto.add("gúgoles");
 //        numero.add(new BigInteger(dameCeros(100)));
-//
-//        texto.add("gúgols");
-//        numero.add(new BigInteger(dameCeros(100)));
+
 
         return new Object[]{texto, numero};
     }
