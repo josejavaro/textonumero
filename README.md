@@ -4,9 +4,9 @@ Posibilidad de añadir nombres de monedas al número convertido a texto.
 # Programado en
 Java para programas de escritorio/servidores o proyectos de Android.
 # Descarga
-Clona el proyecto como Maven a tu PC.
+- Clona el proyecto como Maven a tu PC.
 - Descarga la librería JAR desde aquí.
-- Descarga  
+- Android Studio: añade la depencencia
 # Formas de uso
 TextoNumero textoNumero = new TextoNumero();
 try {
