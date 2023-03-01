@@ -9,7 +9,7 @@ Java para programas de escritorio/servidores o proyectos de Android.
 - Android Studio: añade la depencencia
 # Formas de uso
 TextoNumero textoNumero = new TextoNumero();
-try {
+
 
     //Convertir de número a texto
     String texto = textoNumero.toString(45.846);
@@ -70,6 +70,3 @@ try {
     //Salida: 4082000005000000439
     
     
-} catch (Exception ex) {
-    System.out.println(ex.getMessage());
-}
