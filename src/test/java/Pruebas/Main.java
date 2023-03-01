@@ -35,6 +35,7 @@ public class Main {
             System.out.println(texto);
             
             System.out.println(d);
+            System.out.println(d);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
