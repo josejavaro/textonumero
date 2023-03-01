@@ -131,9 +131,9 @@ public class TextoNumero {
 //                tipoMonedaEnterosPlural = "colones";
 //                tipoMonedaCentimosPlural = "centavos";
                 break;
-
-            case "EC": //Ecuador
+            
             case "SV": //El Salvador
+            case "EC": //Ecuador
             case "PA-DOLAR": //Panamá Dólar
             case "PR": //Puerto Rico
             case "US": //Estados Unidos
@@ -209,8 +209,6 @@ public class TextoNumero {
             case "BO": //Bolivia
                 tipoMonedaEnteros = "boliviano";
                 tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "bolivianos";
-//                tipoMonedaCentimosPlural = "centavos";
                 break;
 
             default:
