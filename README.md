@@ -1,8 +1,8 @@
-# textonumero
+# TextoNumero
 Convierte de texto a número y de número a texto, con o sin decimales.
 Posibilidad de añadir nombres de monedas al número convertido a texto.
-# Programado en
-Java para programas de escritorio/servidores o proyectos de Android.
+# Programado en Java
+Para programas de escritorio/servidores o proyectos de Android Studio.
 # Descarga
 - Clona el proyecto como Maven a tu PC.
 - Descarga la librería JAR desde aquí.
