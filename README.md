@@ -39,7 +39,7 @@ TextoNumero textoNumero = new TextoNumero();
     System.out.println(texto);
     //Salida: seiscientos setenta y dos mil setecientos cuarenta y seis pesos argentinos con noventa y un centavos
     
-    //Convertir de número a texto asignando una moneda de otro país que no esté soportada
+    //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Inglaterra.
     textoNumero.setMoneda("libra", "penique");
     texto = textoNumero.toString(781.13);
     System.out.println(texto);
