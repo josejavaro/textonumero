@@ -33,6 +33,8 @@ public class Main {
             textoNumero.anularMoneda();
             texto = textoNumero.toString(239273947.45);
             System.out.println(texto);
+            
+            System.out.println(d);
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
