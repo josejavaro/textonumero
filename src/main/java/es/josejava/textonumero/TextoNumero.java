@@ -133,9 +133,9 @@ public class TextoNumero {
                 break;
             
             case "SV": //El Salvador
-            case "EC": //Ecuador
-            case "PA-DOLAR": //Panamá Dólar
+            case "EC": //Ecuador            
             case "PR": //Puerto Rico
+            case "PA-DOLAR": //Panamá Dólar
             case "US": //Estados Unidos
                 tipoMonedaEnteros = "dólar";
                 tipoMonedaCentimos = "centavo";
