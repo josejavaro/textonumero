@@ -14,18 +14,18 @@ import java.util.ArrayList;
  */
 public class Op {
     
-    public static String quitaTildes(String input) {
+    protected String quitaTildes(String input) {
         return quitaTildes(input, true);
     }
 
-    public static String quitaTildes(String input, boolean quitaSoloTildes) {
+    protected String quitaTildes(String input, boolean quitaSoloTildes) {
 
-        String original = "áàäéèëíìïóòöúùuñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑ=:+çÇ?¿????/ '\\,.<>{}";
+        String original =   "áàäéèëíìïóòöúùuñÁÀÄÉÈËÍÌÏÓÒÖÚÙÜÑ=:+çÇ?¿????/ '\\,.<>{}";
         String convertido = "aaaeeeiiiooouuunAAAEEEIIIOOOUUUN---cC--cIcc----------";
         String output = input;
-        for(int i=0; i < (quitaSoloTildes ? 14 : original.length()); i++) {
+        
+        for(int i=0; i < (quitaSoloTildes ? 14 : original.length()); i++) 
             output = output.replace(original.charAt(i), convertido.charAt(i));
-        }
 
         if(!quitaSoloTildes) {
             if(output.length() > 1) {
@@ -62,7 +62,7 @@ public class Op {
         return output.trim();
     }
     
-    public static Object[] getTextoNumero(boolean llardos) {
+    protected Object[] getTextoNumero(boolean llardos) {
         ArrayList<String> texto = new ArrayList<>();
         ArrayList<BigInteger> numero = new ArrayList<>();
         
@@ -448,11 +448,11 @@ public class Op {
         return new Object[]{texto, numero};
     }
     
-    public static String dameCeros(int cuantos) {
+    protected String dameCeros(int cuantos) {
         return dameCeros(cuantos, true);
     }
     
-    public static String dameCeros(int cuantos, boolean esNumero) {
+    protected String dameCeros(int cuantos, boolean esNumero) {
         String devu = esNumero ? "1" : "";
 
         for(int a = 0; a < cuantos; a++)

@@ -17,7 +17,7 @@ import java.util.Arrays;
  *
  * @author Otro
  */
-public class TextoNumero {
+public class TextoNumero extends Op {
     public TextoNumero() {
 
     }
@@ -26,19 +26,19 @@ public class TextoNumero {
         this.digitosUnitarios = digitosUnitarios;
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaCentimos) throws Exception {
+    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaCentimos) throws TextoNumeroException {
         setMoneda(tipoMonedaEnteros, "", tipoMonedaCentimos, "", 2);
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaCentimos, int redondeoCentimos) throws Exception {
+    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaCentimos, int redondeoCentimos) throws TextoNumeroException {
         setMoneda(tipoMonedaEnteros, "", tipoMonedaCentimos, "", redondeoCentimos);
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural) throws Exception {
+    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural) throws TextoNumeroException {
         setMoneda(tipoMonedaEnteros, tipoMonedaEnterosPlural, tipoMonedaCentimos, tipoMonedaCentimosPlural, 2);
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural, int redondeoDecimales) throws Exception {
+    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural, int redondeoDecimales) throws TextoNumeroException {
         anularMoneda();
 
         tipoMonedaEnteros = tipoMonedaEnteros == null ? "" : tipoMonedaEnteros.trim();
@@ -47,10 +47,10 @@ public class TextoNumero {
         tipoMonedaCentimosPlural = tipoMonedaCentimosPlural == null ? "" : tipoMonedaCentimosPlural.trim();
 
         if(tipoMonedaEnteros.equals(""))
-            throw new Exception("tipoMonedaEnteros no puede estar vacío");
+            throw new TextoNumeroException("tipoMonedaEnteros no puede estar vacío");
 
         if(tipoMonedaCentimos.equals(""))
-            throw new Exception("tipoMonedaCentimos no puede estar vacío");
+            throw new TextoNumeroException("tipoMonedaCentimos no puede estar vacío");
 
         
         this.esMoneda = true;
@@ -61,30 +61,34 @@ public class TextoNumero {
         this.tipoMonedaCentimosPlural = tipoMonedaCentimosPlural.equals("") ? ponPlural(this.tipoMonedaCentimos) : tipoMonedaCentimosPlural;
     }
 
-    public void setMoneda(String pais) throws Exception {
+    public void setMoneda(String pais) throws TextoNumeroException {
         asignaMoneda(pais, 2);
     }
 
-    public void setMoneda(String pais, int redondeoDecimales) throws Exception {
+    public void setMoneda(String pais, int redondeoDecimales) throws TextoNumeroException {
         if(redondeoDecimales < 0)
-            throw new Exception("redondeoDecimales no puede ser menor que cero");
+            throw new TextoNumeroException("redondeoDecimales no puede ser menor que cero");
         
         asignaMoneda(pais, redondeoDecimales);
     }
-
-    public void anularMoneda() {
+    
+    public void anularMoneda(boolean anularDecimales) {
         esMoneda = false;
-        redondeoDecimales = 0;
+        redondeoDecimales = anularDecimales ? 0 : redondeoDecimales;
     }
 
-    public void setRedondeo(int redondeoDecimales) throws Exception {
+    public void anularMoneda() {
+        anularMoneda(false);
+    }        
+
+    public void setRedondeo(int redondeoDecimales) throws TextoNumeroException {
         if(redondeoDecimales < 0)
-            throw new Exception("redondeoDecimales no puede ser menor que cero");
+            throw new TextoNumeroException("redondeoDecimales no puede ser menor que cero");
         
         this.redondeoDecimales = redondeoDecimales;
     }
 
-    private void asignaMoneda(String codigoPais, int redondeoDecimales) throws Exception {
+    private void asignaMoneda(String codigoPais, int redondeoDecimales) throws TextoNumeroException {
 
         //Códigos alfanuméricos de paises sacados de aquí:
 //        https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
@@ -212,7 +216,7 @@ public class TextoNumero {
                 break;
 
             default:
-                throw new Exception("Código de país no soportado: " + codigoPais);
+                throw new TextoNumeroException("Código de país no soportado: " + codigoPais);
                 
         }
 
@@ -229,15 +233,16 @@ public class TextoNumero {
 
         for(String item : palabraArray) {
             try {
-                if(vocales.contains(String.valueOf(Op.quitaTildes(item).charAt(item.length() - 1)).toLowerCase()))
+                if(vocales.contains(String.valueOf(quitaTildes(item).charAt(item.length() - 1)).toLowerCase()))
                     palabra = palabra.concat(item).concat("s").concat(" ");
                 else {
                     try {
-                        if(vocales.contains(String.valueOf(Op.quitaTildes(item).charAt(item.length() - 2)).toLowerCase())) {
-                            palabra = palabra.concat(Op.quitaTildes(item)).concat("es").concat(" ");
-                        } else {
+                        char c = item.charAt(item.length() - 2);
+                        if(!vocales.contains(String.valueOf(c)) && vocales.contains(quitaTildes(String.valueOf(c)))) 
+                            palabra = palabra.concat(item.substring(0, item.length() - 2)).concat(quitaTildes(String.valueOf(c))).concat(item.substring(item.length() - 1)).concat("es").concat(" ");
+                        else
                             palabra = palabra.concat(item).concat("es").concat(" ");
-                        }
+                        
                     } catch(IndexOutOfBoundsException e) {
                         palabra = palabra.concat(item).concat("es").concat(" ");
                     }
@@ -251,9 +256,9 @@ public class TextoNumero {
         return (moneda.endsWith("s") ? moneda.substring(0, moneda.length() - 1) : moneda).trim();
     }
     
-    private Object[] getTextoNumero(boolean llardos) {
-        return Op.getTextoNumero(llardos);        
-    }
+//    private Object[] getTextoNumero(boolean llardos) {
+//        return getTextoNumero(llardos);        
+//    }
 
     private ArrayList<String> getTexto(boolean llardos) {
         Object[] textoNumero = getTextoNumero(llardos);
@@ -265,59 +270,59 @@ public class TextoNumero {
         return (ArrayList<BigInteger>)textoNumero[1];
     }
 
-    public int intValue(String textoAConvertir) throws Exception {
+    public int intValue(String textoAConvertir) throws TextoNumeroException {
         BigInteger bigInteger = convierteTextoANumero(textoAConvertir, false);
 
         int valorEntero = bigInteger.intValue();
         if(bigInteger.compareTo(new BigInteger(Integer.toString(valorEntero))) != 0)
-            throw new Exception("Valor muy grande para un número entero: " + textoAConvertir);
+            throw new TextoNumeroException("Valor muy grande para un número entero: " + textoAConvertir);
 
         return valorEntero;
     }
 
-    public long longValue(String textoAConvertir) throws Exception {
+    public long longValue(String textoAConvertir) throws TextoNumeroException {
         return longValue(textoAConvertir, false);
     }
 
-    private long longValue(String textoAConvertir, boolean esParteDecimal) throws Exception {
+    private long longValue(String textoAConvertir, boolean esParteDecimal) throws TextoNumeroException {
         BigInteger bigInteger = convierteTextoANumero(textoAConvertir, esParteDecimal);
 
         long valorLargo = bigInteger.longValue();
         if(bigInteger.compareTo(new BigInteger(Long.toString(valorLargo))) != 0)
-            throw new Exception("Valor muy grande para un número entero largo: " + textoAConvertir);
+            throw new TextoNumeroException("Valor muy grande para un número entero largo: " + textoAConvertir);
 
         return valorLargo;
     }
 
-    public BigInteger bigIntegerValue(String textoAConvertir) throws Exception {
+    public BigInteger bigIntegerValue(String textoAConvertir) throws TextoNumeroException {
         return bigIntegerValue(textoAConvertir, false);
     }
 
-    private BigInteger bigIntegerValue(String textoAConvertir, boolean esParteDecimal) throws Exception {
+    private BigInteger bigIntegerValue(String textoAConvertir, boolean esParteDecimal) throws TextoNumeroException {
         return convierteTextoANumero(textoAConvertir, esParteDecimal);
     }
 
-    public double doubleValue(String textoAConvertir) throws Exception {
+    public double doubleValue(String textoAConvertir) throws TextoNumeroException {
         BigDecimal valor = bigDecimalValue(textoAConvertir);
 
         double valorFinal = valor.doubleValue();
         if(valor.compareTo(BigDecimal.valueOf(valorFinal)) != 0)
-            throw new Exception("Valor muy grande para un número doble");
+            throw new TextoNumeroException("Valor muy grande para un número doble");
 
         return valorFinal;
     }
 
-    public float floatValue(String textoAConvertir) throws Exception {
+    public float floatValue(String textoAConvertir) throws TextoNumeroException {
         BigDecimal valor = bigDecimalValue(textoAConvertir);
 
         float valorFinal = valor.floatValue();
         if(valor.compareTo(BigDecimal.valueOf(valorFinal)) != 0)
-            throw new Exception("Valor muy grande para un número doble");
+            throw new TextoNumeroException("Valor muy grande para un número doble");
 
         return valorFinal;
     }
 
-    public BigDecimal bigDecimalValue(String textoAConvertir) throws Exception {
+    public BigDecimal bigDecimalValue(String textoAConvertir) throws TextoNumeroException {
         ArrayList<String> separadorDecimalesTotal = new ArrayList<>(Arrays.asList(new String[]{"con", "coma", "punto", ".", ","}));
         ArrayList<String> separadorDecimales = new ArrayList<>(Arrays.asList(new String[]{"con"}));
         DecimalFormat format = (DecimalFormat) DecimalFormat.getInstance();
@@ -382,7 +387,7 @@ public class TextoNumero {
         return (textoAConvertir.trim().startsWith("menos") && valor.compareTo(BigDecimal.ZERO) != -1 ? valor.negate() : valor);
     }
 
-    private BigInteger convierteTextoANumero(String textoAConvertir, boolean esParteDecimal) throws Exception {
+    private BigInteger convierteTextoANumero(String textoAConvertir, boolean esParteDecimal) throws TextoNumeroException {
         BigInteger numeroFinal = new BigInteger("0");
         String textoAConvertirOriginal = textoAConvertir;
         String[] eliminaTexto = new String[]{"y", "de"};        
@@ -399,7 +404,7 @@ public class TextoNumero {
         int dondeAntes = texto.size();
         int dondeMillon = numero.indexOf(BigInteger.valueOf(1000000));
 
-        textoAConvertir = Op.quitaTildes(textoAConvertir.trim().toLowerCase(), true);
+        textoAConvertir = quitaTildes(textoAConvertir.trim().toLowerCase(), true);
 
         try {
             numeroFinal = new BigInteger(textoAConvertir);
@@ -413,7 +418,7 @@ public class TextoNumero {
         }
 
         for(int a = 0; a < texto.size(); a++)
-            texto.set(a, Op.quitaTildes(texto.get(a), true));
+            texto.set(a, quitaTildes(texto.get(a), true));
 
         for (String eliminaTexto1 : eliminaTexto) {
             textoAConvertir = textoAConvertir.replace(" " + eliminaTexto1 + " ", " ");
@@ -438,10 +443,10 @@ public class TextoNumero {
                     
                 } catch(NumberFormatException e) {
                     //buscar en monedas para quitarlos textos de monedas
-                    if(textos[a].equals(Op.quitaTildes(tipoMonedaEnteros.toLowerCase())) || textos[a].equals(Op.quitaTildes(tipoMonedaEnterosPlural.toLowerCase())) || textos[a].equals(tipoMonedaCentimos.toLowerCase()) || textos[a].equals(Op.quitaTildes(tipoMonedaCentimosPlural.toLowerCase())))
+                    if(textos[a].equals(quitaTildes(tipoMonedaEnteros.toLowerCase())) || textos[a].equals(quitaTildes(tipoMonedaEnterosPlural.toLowerCase())) || textos[a].equals(tipoMonedaCentimos.toLowerCase()) || textos[a].equals(quitaTildes(tipoMonedaCentimosPlural.toLowerCase())))
                         textosAEliminar.add(textos[a]);
                     else
-                        throw new Exception("Palabra no reconocida: " + textos[a] + ". Texto completo: " + textoAConvertirOriginal);
+                        throw new TextoNumeroException("Palabra no reconocida: " + textos[a] + ". Texto completo: " + textoAConvertirOriginal);
                 }
             }
 
@@ -466,17 +471,17 @@ public class TextoNumero {
             for(int b = dondeMillon; b < texto.size(); b++) {
                 int donde = textoAConvertir.indexOf(texto.get(a).concat(" ").concat(texto.get(b)));
                 if(donde != -1)
-                    throw new Exception("No se permiten combinaciones de millones como: millón de millones, millón de billones, billón de trillones, cuatrillón de billones, etc...");
+                    throw new TextoNumeroException("No se permiten combinaciones de millones como: millón de millones, millón de billones, billón de trillones, cuatrillón de billones, etc...");
             }
         }
 
         for(int a = 0; a < textos.length; a++) {
             if(textos[a].equals("menos")) {
                 if(esParteDecimal)
-                    throw new Exception("Palabra 'menos' no permitida en la parte decimal: " + textoAConvertirOriginal);
+                    throw new TextoNumeroException("Palabra 'menos' no permitida en la parte decimal: " + textoAConvertirOriginal);
                 else {
                     if(a != 0)
-                        throw new Exception("Palabra 'menos' no está en el principio de la frase: " + textoAConvertirOriginal);
+                        throw new TextoNumeroException("Palabra 'menos' no está en el principio de la frase: " + textoAConvertirOriginal);
                     else
                         esNegativo = true;
                 }
@@ -490,7 +495,7 @@ public class TextoNumero {
                     largoTextoActual += textos[a].length() + 1;
 
                     if(numeroDigitos.contains(valorAhora.toString().length()))
-                        throw new Exception("Número en texto mal formado: " + textoAConvertirOriginal);
+                        throw new TextoNumeroException("Número en texto mal formado: " + textoAConvertirOriginal);
                     numeroDigitos.add(valorAhora.toString().length());
 
                     if(donde < dondeAntes) {
@@ -543,37 +548,42 @@ public class TextoNumero {
         return esNegativo ? numeroFinal.negate() : numeroFinal;
     }
 
-    public String toString(int numeroAConvertir) throws Exception {
+    public String toString(int numeroAConvertir) throws TextoNumeroException {
         if(digitosUnitarios)
             return dameTextoDigitosUnitarios(BigInteger.valueOf(numeroAConvertir), numeroAConvertir < 0);
         else
-            return toString(BigInteger.valueOf(numeroAConvertir));
+            return getMoneda(toStringPriv(BigInteger.valueOf(numeroAConvertir)));
     }
 
-    public String toString(long numeroAConvertir) throws Exception {
+    public String toString(long numeroAConvertir) throws TextoNumeroException {
         if(digitosUnitarios)
             return dameTextoDigitosUnitarios(BigInteger.valueOf(numeroAConvertir), numeroAConvertir < 0);
         else
-            return toString(BigInteger.valueOf(numeroAConvertir));
+            return getMoneda(toStringPriv(BigInteger.valueOf(numeroAConvertir)));
+    }
+    
+    public String toString(BigInteger numeroAConvertir) throws TextoNumeroException {
+        if(digitosUnitarios)
+            return dameTextoDigitosUnitarios(numeroAConvertir, numeroAConvertir.compareTo(BigInteger.ZERO) == -1);
+        else
+            return getMoneda(toStringPriv(numeroAConvertir));
     }
 
-    public String toString(float numeroAConvertir) throws Exception {
+    public String toString(float numeroAConvertir) throws TextoNumeroException {
         if(digitosUnitarios)
             return dameTextoDigitosUnitarios(BigDecimal.valueOf(numeroAConvertir));
         else
             return toString(BigDecimal.valueOf(numeroAConvertir));
     }
 
-    public String toString(double numeroAConvertir) throws Exception {
+    public String toString(double numeroAConvertir) throws TextoNumeroException {
         if(digitosUnitarios) {
             return dameTextoDigitosUnitarios(BigDecimal.valueOf(numeroAConvertir));
         } else
             return toString(BigDecimal.valueOf(numeroAConvertir));
     }
 
-    public String toString(BigDecimal numeroAConvertir) throws Exception {
-        String monedaEnteros = "";
-        String monedaCentimos = "";
+    public String toString(BigDecimal numeroAConvertir) throws TextoNumeroException {        
         String[] enteroDecimal = numeroAConvertir.toString().split("\\.");
 
         if(redondeoDecimales != 0) {
@@ -589,30 +599,12 @@ public class TextoNumero {
 
         String[] valor = numeroAConvertir.toPlainString().split("\\.");
         for(int a = 0; a < valor.length; a++) 
-            valor[a] = toString(new BigInteger(valor[a])).trim();
-
+            valor[a] = toStringPriv(new BigInteger(valor[a])).trim();
+        
         BigInteger bigIntegerEurosParteEntera = convierteTextoANumero(valor[0], false);
-        BigInteger bigIntegerEurosParteDecimal = BigInteger.ONE;
-
-        try {
-            bigIntegerEurosParteDecimal = convierteTextoANumero(valor[1], true);
-        } catch(IndexOutOfBoundsException e) {
-
-        }
-        if(esMoneda) {
-            String monedaTmp = " ";
-
-            //si acaba en millones y trillones o de ahí hacia adelante poner la preposición "de" delante de la moneda
-            String[] valoresTmp = valor[0].split("\\s+");
-            ArrayList<String> textoTmp = getTexto(true);
-            ArrayList<BigInteger> numeroTmp = getNumero(true);
-            int donde = textoTmp.indexOf(valoresTmp[valoresTmp.length - 1]);
-            if(donde >= numeroTmp.indexOf(BigInteger.valueOf(1000000)))
-                monedaTmp = " de ";
-
-            monedaEnteros = monedaTmp.concat(bigIntegerEurosParteEntera.compareTo(BigInteger.ONE) == 0 ? tipoMonedaEnteros : tipoMonedaEnterosPlural);
-            monedaCentimos = " ".concat(bigIntegerEurosParteDecimal.compareTo(BigInteger.ONE) == 0 ? tipoMonedaCentimos : tipoMonedaCentimosPlural);
-        }
+        String[] monedas = getMoneda(valor[0], valor[1]);
+        String monedaEnteros = monedas[0];
+        String monedaCentimos = monedas[1];
 
         if(bigIntegerEurosParteEntera.compareTo(BigInteger.ZERO) == 0 && numeroAConvertir.compareTo(BigDecimal.ZERO) == -1)
             valor[0] = "menos ".concat(valor[0]);
@@ -621,14 +613,13 @@ public class TextoNumero {
             cuentaCerosIzquierdaDecimal = 0;
 
         try {
-            return valor[0].concat(monedaEnteros).concat(" con ").concat(Op.dameCeros(cuentaCerosIzquierdaDecimal, false)).concat(valor[1]).concat(monedaCentimos);
+            return valor[0].concat(monedaEnteros).concat(" con ").concat(dameCeros(cuentaCerosIzquierdaDecimal, false)).concat(valor[1]).concat(monedaCentimos);
         } catch(IndexOutOfBoundsException e) {
             return valor[0].concat(monedaEnteros);
         }
     }
 
-
-    private String toString(BigInteger numeroAConvertir) {
+    private String toStringPriv(BigInteger numeroAConvertir) {
         String textoAConvertir = numeroAConvertir.toString();
         String textoFinal = "";
         String textoTmp = "";
@@ -659,13 +650,6 @@ public class TextoNumero {
                     textoMiles = texto.get(dondeMilTmp);
                     dondeMilTotal = dondeMilTmp;
                 }
-//                else if(textoMiles.equals("")) {
-//                    dondeMilTmp = numero.indexOf(BigInteger.valueOf(multiplicar));
-//                    if(dondeMilTmp != -1) {
-//                        textoMiles = texto.get(dondeMilTmp);
-//                        dondeMilTotal = dondeMilTmp;
-//                    }
-//                }
             }
             
             if((contaTotal % 3 == 0 && a != textoAConvertir.length() - 1) || a == 0) {
@@ -673,7 +657,7 @@ public class TextoNumero {
 
                 if(esMiles) {
                     //mirar si el texto de millones ya lo tiene el textoFinal y si lo tiene no ponerlo
-                    if(textoFinal.contains(Op.quitaTildes(textoMiles, true)))
+                    if(textoFinal.contains(quitaTildes(textoMiles, true)))
                         textoMiles = "";
 
                     tmpTextoAntes = textoTmp;
@@ -692,7 +676,7 @@ public class TextoNumero {
                         } catch(IndexOutOfBoundsException e) {}
 
                         if(Integer.parseInt(tmpAhora) > 1 || ponPlural)
-                            textoMiles = Op.quitaTildes(textoMiles, true).concat("es");
+                            textoMiles = quitaTildes(textoMiles, true).concat("es");
                     }
 
                     if(tmp.trim().endsWith(texto.get(dondeUno)) && !textoMiles.equals("")) 
@@ -737,7 +721,7 @@ public class TextoNumero {
         int dondeMil = numero.indexOf(BigInteger.valueOf(1000));
         int dondeVeintiuno = numero.indexOf(BigInteger.valueOf(21));
         int dondeUno = numero.indexOf(BigInteger.ONE);        
-        String[] tmpS = tmp.split("\\s+");
+        String[] tmpS = tmp.trim().split("\\s+");
         int itemFinal = tmpS.length;
 
         if(tmp.trim().length() == texto.get(dondeUno).length()) {
@@ -754,7 +738,7 @@ public class TextoNumero {
             }
         } else {
             tmpS[tmpS.length - 1] = tmpS[tmpS.length - 1].substring(0, tmpS[tmpS.length - 1].length() - 1);
-            if(tmpS[tmpS.length - 1].endsWith(Op.quitaTildes(texto.get(dondeVeintiuno + 1), true))) {
+            if(tmpS[tmpS.length - 1].endsWith(quitaTildes(texto.get(dondeVeintiuno + 1), true))) {
                 tmpS[tmpS.length - 1] = texto.get(dondeVeintiuno + 1);
             }
         }
@@ -812,7 +796,7 @@ public class TextoNumero {
         return textoFinal;
     }
 
-    private String dameTextoDigitosUnitarios(BigInteger entrada, boolean esNegativo) throws Exception {
+    private String dameTextoDigitosUnitarios(BigInteger entrada, boolean esNegativo) throws TextoNumeroException {
         ArrayList<String> texto = getTexto(true);
         ArrayList<BigInteger> numero = getNumero(true);
         String textos = entrada.abs().toString();
@@ -824,7 +808,7 @@ public class TextoNumero {
         return (esNegativo ? "menos " : "").concat(textoFinal.trim());
     }
 
-    private String dameTextoDigitosUnitarios(BigDecimal entrada) throws Exception {        
+    private String dameTextoDigitosUnitarios(BigDecimal entrada) throws TextoNumeroException {        
         String textoFinal = "";
         String[] textos;
 
@@ -841,7 +825,7 @@ public class TextoNumero {
             BigInteger bigInteger = new BigInteger(textos[a]);
             boolean esNegativo = a == 0 ? entrada.compareTo(BigDecimal.ZERO) == -1 : false;
             int cuentaCerosIzquierdaDecimal = a == 0 ? 0 : cuantosCerosIzquierdaDecimal(textos[a]);
-            textoFinal = textoFinal.concat(a == 1 ? (esMoneda ? tipoMonedaEnterosPlural : "").concat(" con ") : "").concat((Op.dameCeros(cuentaCerosIzquierdaDecimal, false)) + dameTextoDigitosUnitarios(bigInteger, esNegativo)).concat(" ").concat(a == 1 && esMoneda ? tipoMonedaCentimosPlural : "");
+            textoFinal = textoFinal.concat(a == 1 ? (esMoneda ? tipoMonedaEnterosPlural : "").concat(" con ") : "").concat((dameCeros(cuentaCerosIzquierdaDecimal, false)) + dameTextoDigitosUnitarios(bigInteger, esNegativo)).concat(" ").concat(a == 1 && esMoneda ? tipoMonedaCentimosPlural : "");
         }
 
         return textoFinal.trim().replaceAll("\\s+"," ");
@@ -870,6 +854,42 @@ public class TextoNumero {
         }
 
         return cuentaCerosIzquierdaDecimal;
+    }
+    
+    private String getMoneda(String valorEntero) throws TextoNumeroException {
+        String[] monedas = getMoneda(valorEntero, "0");
+        return valorEntero.concat(" ").concat(monedas[0]).trim().replaceAll("\\s+", " ");
+    }
+    
+    private String[] getMoneda(String valorEntero, String valorDecimal) throws TextoNumeroException {
+        String monedaEnteros = "";
+        String monedaCentimos = "";
+        
+        if(esMoneda) {
+            BigInteger bigIntegerEurosParteEntera = convierteTextoANumero(valorEntero, false);
+            BigInteger bigIntegerEurosParteDecimal = BigInteger.ONE;
+
+            try {
+                bigIntegerEurosParteDecimal = convierteTextoANumero(valorDecimal, true);
+            } catch(IndexOutOfBoundsException e) {
+
+            }
+        
+            String monedaTmp = " ";
+
+            //si acaba en millones y trillones o de ahí hacia adelante poner la preposición "de" delante de la moneda
+            String[] valoresTmp = valorEntero.split("\\s+");
+            ArrayList<String> textoTmp = getTexto(true);
+            ArrayList<BigInteger> numeroTmp = getNumero(true);
+            int donde = textoTmp.indexOf(valoresTmp[valoresTmp.length - 1]);
+            if(donde >= numeroTmp.indexOf(BigInteger.valueOf(1000000)))
+                monedaTmp = " de ";
+
+            monedaEnteros = monedaTmp.concat(bigIntegerEurosParteEntera.compareTo(BigInteger.ONE) == 0 ? tipoMonedaEnteros : tipoMonedaEnterosPlural);
+            monedaCentimos = " ".concat(bigIntegerEurosParteDecimal.compareTo(BigInteger.ONE) == 0 ? tipoMonedaCentimos : tipoMonedaCentimosPlural);
+        }
+        
+        return new String[]{monedaEnteros, monedaCentimos};
     }
     
     private boolean esMoneda;
