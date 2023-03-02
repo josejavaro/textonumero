@@ -1,13 +1,13 @@
-# TextoNumero
-Convierte de texto a número y de número a texto, con o sin decimales.
-Posibilidad de añadir nombres de monedas al número convertido a texto.
+# ¿Que es TextoNumero?
+Convierte de texto a número y de número a texto alfanumérico, con o sin decimales.
+Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Uso" más abajo.
 # Programado en Java
 Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
 # Clonar & Descargar
 - Puedes clonar el repositorio Git como proyecto Maven de Java en tu PC.
 - Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201)
 - Android Studio: añade la depencencia (Android versión ...)
-# Formas de uso
+# Características y Uso
     TextoNumero textoNumero = new TextoNumero();
 
     //Convertir de número a texto
@@ -74,6 +74,4 @@ Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
     textoNumero = new TextoNumero();    
     BigInteger bigInteger = textoNumero.bigIntegerValue("cuatro trillones ochenta y dos mil billones cinco mil millones cuatrocientos treinta y nueve");
     System.out.println(bigInteger.toString());
-    //Salida: 4082000005000000439
-    
-    
+    //Salida: 4082000005000000439       
