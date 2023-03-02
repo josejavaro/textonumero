@@ -1,12 +1,12 @@
 # ¿Que es TextoNumero?
-Convierte de texto a número y de número a texto alfanumérico, con o sin decimales.
+Convierte de texto a número y de número a texto alfanumérico en español, con o sin decimales.
 Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Uso" más abajo.
 # Programado en Java
 Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
 # Clonar & Descargar
 - Puedes clonar el repositorio Git como proyecto Maven de Java en tu PC.
 - Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201)
-- Android Studio: añade la depencencia (Android versión ...)
+- Android Studio: añade la depencencia ... (Android versión ...)
 # Características y Uso
     TextoNumero textoNumero = new TextoNumero();
 
@@ -42,7 +42,7 @@ Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
     System.out.println(texto);
     //Salida: seiscientos setenta y dos mil setecientos cuarenta y seis pesos argentinos con noventa y un centavos
     
-    //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Inglaterra.
+    //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Gran Bretaña.
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("libra", "penique");
     texto = textoNumero.toString(781.13);
