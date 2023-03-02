@@ -1,6 +1,6 @@
 # ¿Que es TextoNumero?
 Convierte de texto a número y de número a texto alfanumérico en español, con o sin decimales.
-Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Uso" más abajo.
+Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Características y Uso" más abajo.
 # Programado en Java
 Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
 # Clonar & Descargar
