@@ -1,12 +1,22 @@
 # ¿Que es TextoNumero?
 Convierte de texto a número y de número a texto alfanumérico en español, con o sin decimales.
 Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Características y Uso" más abajo.
-# Programado en Java
-Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
+# ¿Donde se puede usar?
+Está programado en Java y se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de Android en Java o Kotlin.
 # Clonar & Descargar
 - Puedes clonar el repositorio Git como proyecto Maven.
 - Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201): https://github.com/josejavaro/textonumero/releases/download/1.1.0/textonumero-1.1.0.jar
-- Android Studio: añade la depencencia ... (Android versión ...)
+- En proyectos de Android añade la depencencia en el Gradle (App):
+    
+        dependencies {
+            implementation 'com.github.josejavaro:textonumero:1.1.0.aar'
+        }
+    
+    Puede ser necesario que añadas también la dependencia a GitHub(JitPack) en los repositorios del Gradle (Build):
+    
+        repositories {
+            maven { url 'https://jitpack.io' }            
+        }
 # Características y Uso
     TextoNumero textoNumero = new TextoNumero();
 
@@ -49,14 +59,14 @@ Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
     System.out.println(texto);
     //Salida: setecientos ochenta y un libras con trece peniques
     
-    //Convertir desde dígitos unitarios
+    //Convertir a dígitos unitarios desde texto
     textoNumero = new TextoNumero();
     textoNumero.setDigitosUnitarios(true);
     int numero = textoNumero.intValue("seis cinco siete ocho");
     System.out.println(numero);
     //Salida: 6578
     
-    //Convertir a dígitos unitarios
+    //Convertir desde dígitos unitarios desde número
     textoNumero = new TextoNumero();
     textoNumero.setDigitosUnitarios(true);
     texto = textoNumero.toString(78373);
