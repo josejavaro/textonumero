@@ -4,7 +4,7 @@ Posibilidad de añadir nombres de monedas al número convertido a texto. Tambié
 # Programado en Java
 Para aplicaciones de escritorio/servidores o proyectos de Android Studio.
 # Clonar & Descargar
-- Puedes clonar el repositorio Git como proyecto Maven en tu PC. PONER AQUÍ LA URL DE descarga, como este: https://github.com/uklance/releases
+- Puedes clonar el repositorio Git como proyecto Maven.
 - Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201): https://github.com/josejavaro/textonumero/releases/download/1.1.0/textonumero-1.1.0.jar
 - Android Studio: añade la depencencia ... (Android versión ...)
 # Características y Uso
