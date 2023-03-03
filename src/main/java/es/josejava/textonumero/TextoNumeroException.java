@@ -7,7 +7,7 @@ package es.josejava.textonumero;
 
 /**
  *
- * @author Otro
+ * @author jose-java
  */
 public class TextoNumeroException extends Exception {
 

@@ -15,11 +15,18 @@ import java.util.Arrays;
 
 /**
  *
- * @author Otro
+ * @author jose-java
  */
 public class TextoNumero extends Op {
     public TextoNumero() {
 
+    }
+    
+    public void setSeparadorEnterosDecimales(String separadorEnterosDecimales) throws TextoNumeroException{
+        if(separadorEnterosDecimales.trim().toLowerCase().equals("y"))
+            throw new TextoNumeroException("Separador 'y' no permitido, se puede confundir con la conjunción de cantidades como: treinta y cinco, ochenta y nueve, etc...");
+        
+        this.separadorEnterosDecimales = separadorEnterosDecimales.trim().toLowerCase();
     }
 
     public void setDigitosUnitarios(boolean digitosUnitarios) {
@@ -89,141 +96,62 @@ public class TextoNumero extends Op {
     }
 
     private void asignaMoneda(String codigoPais, int redondeoDecimales) throws TextoNumeroException {
-
         //Códigos alfanuméricos de paises sacados de aquí:
 //        https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 
-        switch(codigoPais.toUpperCase()) {
-            case "ES": //España
-                tipoMonedaEnteros = "euro";
-                tipoMonedaCentimos = "céntimo";
-//                tipoMonedaEnterosPlural = "euros";
-//                tipoMonedaCentimosPlural = "céntimos";
+        String[][] paises = getCodigosPaises();        
+    
+        for(String[] pais : paises) {
+            if(pais[0].equals(codigoPais.trim())) {
+                tipoMonedaEnteros = pais[2];
+                tipoMonedaCentimos = pais[3];
                 break;
-
-            case "AR": //Argentina
-                tipoMonedaEnteros = "peso argentino";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "pesos argentinos";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "CL": //Chile
-                tipoMonedaEnteros = "peso chileno";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "pesos chilenos";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "CO": //Colombia
-                tipoMonedaEnteros = "peso colombiano";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "pesos colombianos";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "DO": //República Dominicana
-                tipoMonedaEnteros = "peso dominicano";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "pesos dominicanos";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "CR": //Costa Rica
-                tipoMonedaEnteros = "colón";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "colones";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-            
-            case "SV": //El Salvador
-            case "EC": //Ecuador            
-            case "PR": //Puerto Rico
-            case "PA-DOLAR": //Panamá Dólar
-            case "US": //Estados Unidos
-                tipoMonedaEnteros = "dólar";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "dólares";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "GT": //Guatemala
-                tipoMonedaEnteros = "quetzal";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "quetzales";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "HN": //Honduras
-                tipoMonedaEnteros = "lempira";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "lempiras";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "MX": //México
-                tipoMonedaEnteros = "peso mexicano";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "pesos mexicanos";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "NI": //Nicaragua
-                tipoMonedaEnteros = "córdoba";
-                tipoMonedaCentimos = "centavo";
-//                tipoMonedaEnterosPlural = "córdobas";
-//                tipoMonedaCentimosPlural = "centavos";
-                break;
-
-            case "PA": //Panamá - Balboa
-                tipoMonedaEnteros = "balboa";
-                tipoMonedaCentimos = "centésimo";
-//                tipoMonedaEnterosPlural = "balboas";
-//                tipoMonedaCentimosPlural = "centésimos";
-                break;
-                
-            case "PE": //Perú
-                tipoMonedaEnteros = "sol";
-                tipoMonedaCentimos = "céntimo";
-//                tipoMonedaEnterosPlural = "soles";
-//                tipoMonedaCentimosPlural = "céntimos";
-                break;
-
-            case "PY": //Paraguay
-                tipoMonedaEnteros = "guaraní";
-                tipoMonedaCentimos = "céntimo";
-//                tipoMonedaEnterosPlural = "guaraníes";
-//                tipoMonedaCentimosPlural = "céntimos";
-                break;
-
-            case "UY": //Uruguay
-                tipoMonedaEnteros = "peso uruguayo";
-                tipoMonedaCentimos = "centésimo";
-//                tipoMonedaEnterosPlural = "pesos uruguayos";
-//                tipoMonedaCentimosPlural = "centésimos";
-                break;
-
-            case "VE": //Venezuela
-                tipoMonedaEnteros = "bolívar";
-                tipoMonedaCentimos = "céntimo";
-//                tipoMonedaEnterosPlural = "bolívares";
-//                tipoMonedaCentimosPlural = "céntimos";
-                break;
-
-            case "BO": //Bolivia
-                tipoMonedaEnteros = "boliviano";
-                tipoMonedaCentimos = "centavo";
-                break;
-
-            default:
-                throw new TextoNumeroException("Código de país no soportado: " + codigoPais);
-                
+            }    
         }
 
         esMoneda = true;
         tipoMonedaEnterosPlural = ponPlural(tipoMonedaEnteros);
         tipoMonedaCentimosPlural = ponPlural(tipoMonedaCentimos);
         this.redondeoDecimales = redondeoDecimales;
+    }
+    
+    public String[][] getCodigosPaises() {
+        return new String[][]{
+            {"ES", "España", "euro", "céntimo"},
+            {"AR", "Argentina", "peso argentino", "centavo"},
+            {"CL", "Chile", "peso chileno", "centavo"},
+            {"CO", "Colombia", "peso colombiano", "centavo"},
+            {"DO", "República Dominicana", "peso dominicano", "centavo"},
+            {"CR", "Costa Rica", "colón", "centavo"},
+            {"SV", "El Salvador", "dólar", "centavo"},
+            {"EC", "Ecuador", "dólar", "centavo"},
+            {"PR", "Puerto Rico", "dólar", "centavo"},
+            {"PA", "Panamá", "balboa", "centésimo"},
+            {"PA-DOLAR", "Panamá", "dólar", "centavo"},
+            {"US", "Estados Unidos", "dólar", "centavo"},
+            {"GT", "Guatemala", "quetzal", "centavo"},
+            {"HN", "Honduras", "lempira", "centavo"},
+            {"MX", "México", "peso mexicano", "centavo"},
+            {"NI", "Nicaragua", "córdoba", "centavo"},
+            {"PE", "Perú", "sol", "céntimo"},
+            {"PY", "Paraguay", "guaraní", "céntimo"},
+            {"UY", "Uruguay", "peso uruguayo", "centésimo"},
+            {"VE", "Venezuela", "bolivar", "céntimo"},
+            {"BO", "Bolivia", "boliviano", "centavo"},
+        };
+    }
+    
+    public ArrayList<String> getPaises() {
+        ArrayList<String> paisesList = new ArrayList<>();
+        String[][] paises = getCodigosPaises();
+        
+        for(String[] pais : paises) {
+            paisesList.add("");
+            for(String paisArray : pais) 
+                paisesList.set(paisesList.size() - 1, paisesList.get(paisesList.size() - 1).concat(paisArray).concat(", "));
+            paisesList.set(paisesList.size() - 1, paisesList.get(paisesList.size() - 1).substring(0, paisesList.get(paisesList.size() - 1).length() - 2));            
+        }
+        return paisesList;
     }
 
     private String ponPlural(String palabra) {
@@ -333,6 +261,10 @@ public class TextoNumero extends Op {
             separadorDecimales.add("coma");
         else
             separadorDecimales.add("punto");
+        if(separadorDecimalesTotal.indexOf(separadorEnterosDecimales) == -1) {
+            separadorDecimalesTotal.add(separadorEnterosDecimales);
+            separadorDecimales.add(separadorEnterosDecimales);
+        }
 
         int cuentaCerosIzquierdaDecimal = 0;
         int dondeSeparadorDecimales = -1;
@@ -613,7 +545,7 @@ public class TextoNumero extends Op {
             cuentaCerosIzquierdaDecimal = 0;
 
         try {
-            return valor[0].concat(monedaEnteros).concat(" con ").concat(dameCeros(cuentaCerosIzquierdaDecimal, false)).concat(valor[1]).concat(monedaCentimos);
+            return valor[0].concat(monedaEnteros).concat(" ".concat(separadorEnterosDecimales).concat(" ")).concat(dameCeros(cuentaCerosIzquierdaDecimal, false)).concat(valor[1]).concat(monedaCentimos);
         } catch(IndexOutOfBoundsException e) {
             return valor[0].concat(monedaEnteros);
         }
@@ -825,7 +757,7 @@ public class TextoNumero extends Op {
             BigInteger bigInteger = new BigInteger(textos[a]);
             boolean esNegativo = a == 0 ? entrada.compareTo(BigDecimal.ZERO) == -1 : false;
             int cuentaCerosIzquierdaDecimal = a == 0 ? 0 : cuantosCerosIzquierdaDecimal(textos[a]);
-            textoFinal = textoFinal.concat(a == 1 ? (esMoneda ? tipoMonedaEnterosPlural : "").concat(" con ") : "").concat((dameCeros(cuentaCerosIzquierdaDecimal, false)) + dameTextoDigitosUnitarios(bigInteger, esNegativo)).concat(" ").concat(a == 1 && esMoneda ? tipoMonedaCentimosPlural : "");
+            textoFinal = textoFinal.concat(a == 1 ? (esMoneda ? tipoMonedaEnterosPlural : "").concat(" ".concat(separadorEnterosDecimales).concat(" ")) : "").concat((dameCeros(cuentaCerosIzquierdaDecimal, false)) + dameTextoDigitosUnitarios(bigInteger, esNegativo)).concat(" ").concat(a == 1 && esMoneda ? tipoMonedaCentimosPlural : "");
         }
 
         return textoFinal.trim().replaceAll("\\s+"," ");
@@ -899,5 +831,6 @@ public class TextoNumero extends Op {
     private String tipoMonedaCentimosPlural = "";
     private int redondeoDecimales;
     private boolean digitosUnitarios;
+    private String separadorEnterosDecimales = "con";
     private final String[] juntarCientos = new String[]{"dos cientos", "dos cientas", "tres cientos", "tres cientas", "cuatro cientos", "cuatro cientas", "seis cientos", "seis cientas", "ocho cientos", "ocho cientas"};
 }
