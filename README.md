@@ -52,6 +52,12 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     System.out.println(texto);
     //Salida: seiscientos setenta y dos mil setecientos cuarenta y seis pesos argentinos con noventa y un centavos
     
+    //Obtener los países soportados
+    ArrayList<String> paises = textoNumero.getPaises();
+    paises.forEach((pais) -> {
+        System.out.println(pais);
+    });
+    
     //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Gran Bretaña.
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("libra", "penique");
