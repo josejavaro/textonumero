@@ -116,7 +116,7 @@ public class TextoNumero extends Op {
     }
     
     public String[][] getCodigosPaises() {
-        return new String[][]{
+        String[][] paises = new String[][]{
             {"ES", "España", "euro", "céntimo"},
             {"AR", "Argentina", "peso argentino", "centavo"},
             {"CL", "Chile", "peso chileno", "centavo"},
@@ -139,6 +139,11 @@ public class TextoNumero extends Op {
             {"VE", "Venezuela", "bolivar", "céntimo"},
             {"BO", "Bolivia", "boliviano", "centavo"},
         };
+        
+        //ordenar el array por el código de país
+        Arrays.sort(paises, (String[] a, String[] b) -> a[0].compareTo(b[0]));
+        
+        return paises;
     }
     
     public ArrayList<String> getPaises() {
@@ -151,6 +156,7 @@ public class TextoNumero extends Op {
                 paisesList.set(paisesList.size() - 1, paisesList.get(paisesList.size() - 1).concat(paisArray).concat(", "));
             paisesList.set(paisesList.size() - 1, paisesList.get(paisesList.size() - 1).substring(0, paisesList.get(paisesList.size() - 1).length() - 2));            
         }
+        
         return paisesList;
     }
 
@@ -304,7 +310,7 @@ public class TextoNumero extends Op {
             resultado[a] = bigIntegerValue(enterosDecimales[a], a == 1).abs();
 
         BigInteger valorDecimal = BigInteger.ONE;
-        for(int a = 0; a < resultado[1].toString().length() + cuentaCerosIzquierdaDecimal; a++)
+        for(int a = 0; a < (esMoneda ? resultado[1].toString().length() : resultado[1].toString().length() + cuentaCerosIzquierdaDecimal); a++)
             valorDecimal = valorDecimal.multiply(BigInteger.TEN);
 
         BigDecimal valor = new BigDecimal(resultado[1]);        
@@ -783,6 +789,9 @@ public class TextoNumero extends Op {
                     break;
                 }
             }
+//            if(esMoneda && redondeoDecimales > cuentaCerosIzquierdaDecimal)
+//                cuentaCerosIzquierdaDecimal = redondeoDecimales;
+                        
         }
 
         return cuentaCerosIzquierdaDecimal;
