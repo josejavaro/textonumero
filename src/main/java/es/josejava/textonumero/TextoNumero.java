@@ -275,7 +275,7 @@ public class TextoNumero extends Op {
         int cuentaCerosIzquierdaDecimal = 0;
         int dondeSeparadorDecimales = -1;
         String[] enterosDecimales = new String[2];
-        textoAConvertir = textoAConvertir.toLowerCase();
+        textoAConvertir = quitaTildes(textoAConvertir.toLowerCase());
 
         for(String separador : separadorDecimalesTotal) {
             if(!separadorDecimales.contains(separador)) {
