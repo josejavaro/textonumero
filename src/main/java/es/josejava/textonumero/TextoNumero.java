@@ -310,7 +310,7 @@ public class TextoNumero extends Op {
             resultado[a] = bigIntegerValue(enterosDecimales[a], a == 1).abs();
 
         BigInteger valorDecimal = BigInteger.ONE;
-        for(int a = 0; a < (esMoneda ? redondeoDecimales : resultado[1].toString().length() + cuentaCerosIzquierdaDecimal); a++)
+        for(int a = 0; a < (esMoneda ? Math.max(redondeoDecimales, resultado[1].toString().length()) : resultado[1].toString().length() + cuentaCerosIzquierdaDecimal); a++)
             valorDecimal = valorDecimal.multiply(BigInteger.TEN);
 
         BigDecimal valor = new BigDecimal(resultado[1]);        
