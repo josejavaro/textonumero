@@ -361,7 +361,7 @@ public class TextoNumero extends Op {
         for (String eliminaTexto1 : eliminaTexto) {
             textoAConvertir = textoAConvertir.replace(" " + eliminaTexto1 + " ", " ");
         }
-        String[] textos = textoAConvertir.split("\\s+");
+        String[] textos = quitaTildes(textoAConvertir).split("\\s+");
 
         textoAConvertir = "";
         ArrayList<String> textosAEliminar = new ArrayList<>();
