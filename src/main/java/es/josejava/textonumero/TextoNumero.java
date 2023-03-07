@@ -279,9 +279,12 @@ public class TextoNumero extends Op {
 
         for(String separador : separadorDecimalesTotal) {
             if(!separadorDecimales.contains(separador)) {
-                int donde = textoAConvertir.indexOf(" " + separador + " ");
+                int donde = textoAConvertir.indexOf(" ".concat(separador).concat(" "));
                 if(donde != -1)
-                    textoAConvertir = textoAConvertir.replace(separador + " ", "");
+                    textoAConvertir = textoAConvertir.replace(separador.concat(" "), "");
+                
+            } else if(separador.length() == 1) {
+                textoAConvertir = textoAConvertir.replaceAll(separador, " ".concat(separador).concat(" "));
             }
         }
 
@@ -300,9 +303,16 @@ public class TextoNumero extends Op {
 
             //Contar los ceros por la izquierda, ya que va a meterse este valor en un BigInteger van a desaparecer
             cuentaCerosIzquierdaDecimal = cuantosCerosIzquierdaDecimal(enterosDecimales[1]);
-        } else {
-            enterosDecimales[0] = textoAConvertir;
-            enterosDecimales[1] = "0";
+        } else {                        
+            if(esMoneda && !textoAConvertir.contains(quitaTildes(tipoMonedaEnteros)) && !textoAConvertir.contains(quitaTildes(tipoMonedaEnterosPlural)) && 
+                    (textoAConvertir.contains(quitaTildes(tipoMonedaCentimos)) || textoAConvertir.contains(quitaTildes(tipoMonedaCentimosPlural)))) {
+                
+                enterosDecimales[0] = "0";
+                enterosDecimales[1] = textoAConvertir;
+            } else {
+                enterosDecimales[0] = textoAConvertir;
+                enterosDecimales[1] = "0";
+            }
         }
 
         BigInteger[] resultado = new BigInteger[2];
@@ -350,17 +360,16 @@ public class TextoNumero extends Op {
         } catch(NumberFormatException e) {}
 
         for (String juntarCiento : juntarCientos) {
-            if (textoAConvertir.contains(juntarCiento)) {
+            if (textoAConvertir.contains(juntarCiento)) 
                 textoAConvertir = textoAConvertir.replace(juntarCiento, juntarCiento.replace(" ", ""));
-            }
         }
 
         for(int a = 0; a < texto.size(); a++)
             texto.set(a, quitaTildes(texto.get(a), true));
 
-        for (String eliminaTexto1 : eliminaTexto) {
+        for (String eliminaTexto1 : eliminaTexto) 
             textoAConvertir = textoAConvertir.replace(" " + eliminaTexto1 + " ", " ");
-        }
+        
         String[] textos = quitaTildes(textoAConvertir).split("\\s+");
 
         textoAConvertir = "";
@@ -370,12 +379,14 @@ public class TextoNumero extends Op {
                 try {
                     long numeroATexto = Long.parseLong(textos[a]);
                     String textoReemplazar = toString(numeroATexto);
+                    for (String eliminaTexto1 : eliminaTexto) 
+                        textoReemplazar = textoReemplazar.replace(" " + eliminaTexto1 + " ", " ");
                     textos[a] = textoReemplazar;
                     textoAConvertir = "";
                     for (String texto1 : textos) {
                         textoAConvertir = textoAConvertir.concat(texto1).concat(" ");
                     }
-                    textos = textoAConvertir.trim().split("\\s+");
+                    textos = quitaTildes(textoAConvertir).trim().split("\\s+");
                     textoAConvertir = "";
                     a = -1;
                     
