@@ -96,9 +96,6 @@ public class TextoNumero extends Op {
     }
 
     private void asignaMoneda(String codigoPais, int redondeoDecimales) throws TextoNumeroException {
-        //Códigos alfanuméricos de paises sacados de aquí:
-//        https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
-
         String[][] paises = getCodigosPaises();        
     
         for(String[] pais : paises) {
@@ -116,6 +113,9 @@ public class TextoNumero extends Op {
     }
     
     public String[][] getCodigosPaises() {
+//          Códigos alfanuméricos de paises sacados de aquí:
+//        https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+        
         String[][] paises = new String[][]{
             {"ES", "España", "euro", "céntimo"},
             {"AR", "Argentina", "peso argentino", "centavo"},
@@ -392,7 +392,7 @@ public class TextoNumero extends Op {
                     
                 } catch(NumberFormatException e) {
                     //buscar en monedas para quitarlos textos de monedas
-                    if(textos[a].equals(quitaTildes(tipoMonedaEnteros.toLowerCase())) || textos[a].equals(quitaTildes(tipoMonedaEnterosPlural.toLowerCase())) || textos[a].equals(tipoMonedaCentimos.toLowerCase()) || textos[a].equals(quitaTildes(tipoMonedaCentimosPlural.toLowerCase())))
+                    if(textos[a].equals(quitaTildes(tipoMonedaEnteros.toLowerCase())) || textos[a].equals(quitaTildes(tipoMonedaEnterosPlural.toLowerCase())) || textos[a].equals(quitaTildes(tipoMonedaCentimos).toLowerCase()) || textos[a].equals(quitaTildes(tipoMonedaCentimosPlural.toLowerCase())))
                         textosAEliminar.add(textos[a]);
                     else
                         throw new TextoNumeroException("Palabra no reconocida: " + textos[a] + ". Texto completo: " + textoAConvertirOriginal);
