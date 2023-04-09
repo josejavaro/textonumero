@@ -61,9 +61,10 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Gran Bretaña.
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("libra", "penique");
+    textoNumero.setMonedaFemenino(true);
     texto = textoNumero.toString(781.13);
     System.out.println(texto);
-    //Salida: setecientos ochenta y un libras con trece peniques
+    //Salida: setecientas ochenta y un libras con trece peniques
     
     //Convertir a dígitos unitarios desde texto
     textoNumero = new TextoNumero();
@@ -90,4 +91,13 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     textoNumero = new TextoNumero();    
     BigInteger bigInteger = textoNumero.bigIntegerValue("cuatro trillones ochenta y dos mil billones cinco mil millones cuatrocientos treinta y nueve");
     System.out.println(bigInteger.toString());
-    //Salida: 4082000005000000439       
+    //Salida: 4082000005000000439   
+    
+    //Capturar error
+    try {
+        String numero = "9000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+        String texto = textoNumero.toString(new BigDecimal(numero));            
+        System.out.println(texto);
+    } catch(TextoNumeroException ex) {
+        System.out.println(ex.getMessage());
+    }
