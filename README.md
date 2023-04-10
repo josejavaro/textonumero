@@ -93,6 +93,19 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     System.out.println(bigInteger.toString());
     //Salida: 4082000005000000439   
     
+    //Texto con números
+    textoNumero = new TextoNumero();    
+    double valor = textoNumero.doubleValue("cuatro mil 201");
+    System.out.println(valor);
+    //Salida: 4201.0
+    
+    //Especificar un separador de la parte entera con la decimal
+    textoNumero = new TextoNumero();    
+    textoNumero.setSeparadorEnterosDecimales("aaaaaaaaaaaaaaaa");
+    double valor = textoNumero.doubleValue("cuatro mil aaaaaaaaaaaaaaaa tres");
+    System.out.println(valor);
+    //Salida: 4000.3
+    
     //Capturar error
     try {
         String numero = "9000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
