@@ -106,6 +106,20 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     System.out.println(valor);
     //Salida: 4000.3
     
+    //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como: veintiocho doce (se convertiría en veintiocho con doce)
+    textoNumero = new TextoNumero();    
+    double valor = textoNumero.doubleValue("veintiocho doce");
+    System.out.println(valor);
+    //Salida: 28.12
+    
+    //Se puede cancelar la autodetección de la posición decimal en monedas con el método setAutodetectaDecimalesMoneda
+    textoNumero.setMoneda("ES");
+    textoNumero.setAutodetectaDecimalesMoneda(false);
+    double valor = textoNumero.doubleValue("veintiocho doce");
+    System.out.println(valor);
+    //Aquí daría error de TextoNumeroException -> Número en texto mal formado: veintiocho doce
+    
+    
     //Capturar error
     try {
         String numero = "9000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
