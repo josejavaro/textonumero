@@ -9,7 +9,7 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
 - En proyectos de Android añade la depencencia en el Gradle (App):
     
         dependencies {
-            implementation 'com.github.josejavaro:textonumero:1.1.0.aar'
+            implementation 'com.github.josejavaro:textonumero:1.1.0'
         }
     
     Puede ser necesario añadir también el repositorio a GitHub(JitPack) en el Gradle (Build):
