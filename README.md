@@ -99,12 +99,27 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     System.out.println(valor);
     //Salida: 4201.0
     
-    //Especificar un separador de la parte entera con la decimal
+    //Añadir un separador de la parte entera con la decimal
     textoNumero = new TextoNumero();    
-    textoNumero.setSeparadorEnterosDecimales("aaaaaaaaaaaaaaaa");
+    textoNumero.addSeparadorEnterosDecimales("aaaaaaaaaaaaaaaa");
     double valor = textoNumero.doubleValue("cuatro mil aaaaaaaaaaaaaaaa tres");
     System.out.println(valor);
     //Salida: 4000.3
+    
+    //Se pueden añadir varios separadores y el que queda como actual es el último añadido
+    textoNumero = new TextoNumero();
+    textoNumero.setMoneda("ES");
+    textoNumero.addSeparadorEnterosDecimales("aaa");
+    textoNumero.addSeparadorEnterosDecimales("bbb");
+    textoNumero.addSeparadorEnterosDecimales("ccc");
+    String texto = textoNumero.toString(12.78);
+    System.out.println(texto);
+    //Salida: doce euros ccc setenta y ocho céntimos
+    
+    double valor = textoNumero.doubleValue("cuatro bbb seis");
+    System.out.println(valor);
+    //Salida: 4.06
+    
     
     //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como: veintiocho doce (se convertiría en veintiocho con doce)
     textoNumero = new TextoNumero();
