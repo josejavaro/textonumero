@@ -73,7 +73,7 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     System.out.println(numero);
     //Salida: 6578
     
-    //Convertir desde dígitos unitarios desde número
+    //Convertir a texto (dígitos unitarios) desde número
     textoNumero = new TextoNumero();
     textoNumero.setDigitosUnitarios(true);
     texto = textoNumero.toString(78373);
@@ -107,12 +107,14 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     //Salida: 4000.3
     
     //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como: veintiocho doce (se convertiría en veintiocho con doce)
-    textoNumero = new TextoNumero();    
+    textoNumero = new TextoNumero();
+    textoNumero.setMoneda("ES");
     double valor = textoNumero.doubleValue("veintiocho doce");
     System.out.println(valor);
     //Salida: 28.12
     
     //Se puede cancelar la autodetección de la posición decimal en monedas con el método setAutodetectaDecimalesMoneda
+    textoNumero = new TextoNumero();
     textoNumero.setMoneda("ES");
     textoNumero.setAutodetectaDecimalesMoneda(false);
     double valor = textoNumero.doubleValue("veintiocho doce");
@@ -122,6 +124,7 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     
     //Capturar error
     try {
+        textoNumero = new TextoNumero();
         String numero = "9000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
         String texto = textoNumero.toString(new BigDecimal(numero));            
         System.out.println(texto);
