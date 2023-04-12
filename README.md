@@ -121,7 +121,8 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     //Salida: 4.06
     
     
-    //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como: veintiocho doce (se convertiría en veintiocho con doce)
+    //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como:
+    //veintiocho doce (se convertiría en veintiocho con doce)
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("ES");
     double valor = textoNumero.doubleValue("veintiocho doce");
