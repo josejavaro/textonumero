@@ -64,7 +64,7 @@ Está programado en Java y se puede usar en aplicaciones de escritorio/servidore
     textoNumero.setMonedaFemenino(true);
     texto = textoNumero.toString(781.13);
     System.out.println(texto);
-    //Salida: setecientas ochenta y un libras con trece peniques
+    //Salida: setecientas ochenta y una libras con trece peniques
     
     //Convertir a dígitos unitarios desde texto
     textoNumero = new TextoNumero();
