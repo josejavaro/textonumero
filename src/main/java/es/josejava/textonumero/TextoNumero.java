@@ -27,7 +27,7 @@ public class TextoNumero extends Op {
     private int redondeoDecimales;
     private boolean digitosUnitarios;
     private String separadorEnterosDecimales = "con";
-    private final ArrayList<String> separadoresEnterosDecimales;
+    private final ArrayList<String> separadoresEnterosDecimales = new ArrayList<>();
     private boolean monedaFemenino;
     private boolean autodetectaDecimalesMoneda = true;
     private final String[] juntarCientos = new String[]{"dos cientos", "dos cientas", "tres cientos", "tres cientas", "cuatro cientos", "cuatro cientas", "seis cientos", "seis cientas", "ocho cientos", "ocho cientas"};
@@ -35,7 +35,7 @@ public class TextoNumero extends Op {
     
     
     public TextoNumero() {
-        separadoresEnterosDecimales = new ArrayList<>();
+        
     }
     
     public void setDigitosUnitarios(boolean digitosUnitarios) {
