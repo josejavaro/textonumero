@@ -188,15 +188,15 @@ public class Op {
 
         texto.add("noventa");
         numero.add(new BigInteger("90"));
-
+        
         texto.add("cien");
         numero.add(new BigInteger("100"));
-
+        
         texto.add("ciento");
         numero.add(new BigInteger("100"));
 
         texto.add("cientos");
-        numero.add(new BigInteger("100"));
+        numero.add(new BigInteger("100"));                
 
         texto.add("cientas");
         numero.add(new BigInteger("100"));
@@ -449,14 +449,15 @@ public class Op {
     }
     
     protected String dameCeros(int cuantos) {
-        return dameCeros(cuantos, true);
+        return dameCeros(cuantos, true, false);
     }
     
-    protected String dameCeros(int cuantos, boolean esNumero) {
+    protected String dameCeros(int cuantos, boolean esNumero, boolean esMoneda) {
         String devu = esNumero ? "1" : "";
 
-        for(int a = 0; a < cuantos; a++)
-            devu = devu.concat(esNumero ? "0" : "cero ");
+        if(!esMoneda)
+            for(int a = 0; a < cuantos; a++)
+                devu = devu.concat(esNumero ? "0" : "cero ");
 
         return devu;
     }
