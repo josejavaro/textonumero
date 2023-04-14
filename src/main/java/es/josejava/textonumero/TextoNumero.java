@@ -35,7 +35,7 @@ public class TextoNumero extends Op {
     
     
     public TextoNumero() {
-        esMoneda = false;
+        
     }
     
     public void setDigitosUnitarios(boolean digitosUnitarios) {
