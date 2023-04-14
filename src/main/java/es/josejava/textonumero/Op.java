@@ -14,8 +14,7 @@ import java.util.ArrayList;
  */
 public class Op {
 	
-	private boolean ya;
-    
+   
     protected String quitaTildes(String input) {
         return quitaTildes(input, true);
     }

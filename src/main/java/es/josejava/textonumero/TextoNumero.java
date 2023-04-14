@@ -32,8 +32,7 @@ public class TextoNumero extends Op {
     private boolean autodetectaDecimalesMoneda = true;
     private final String[] juntarCientos = new String[]{"dos cientos", "dos cientas", "tres cientos", "tres cientas", "cuatro cientos", "cuatro cientas", "seis cientos", "seis cientas", "ocho cientos", "ocho cientas"};
     private final String[] eliminaTexto = new String[]{"y", "de"};
-    private boolean ya;
-    
+        
     
     public TextoNumero() {
         
@@ -208,11 +207,13 @@ public class TextoNumero extends Op {
 //        return getTextoNumero(llardos);        
 //    }
 
+    @SuppressWarnings("unchecked")
     private ArrayList<String> getTexto(boolean llardos) {
         Object[] textoNumero = getTextoNumero(llardos);
         return (ArrayList<String>)textoNumero[0];
     }
 
+    @SuppressWarnings("unchecked")
     private ArrayList<BigInteger> getNumero(boolean llardos) {
         Object[] textoNumero = getTextoNumero(llardos);
         return (ArrayList<BigInteger>)textoNumero[1];

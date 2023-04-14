@@ -11,12 +11,17 @@ package es.josejava.textonumero;
  */
 public class TextoNumeroException extends Exception {
 
-    public TextoNumeroException(String string) {
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	public TextoNumeroException(String string) {
         super(string);
     }
 
-    public TextoNumeroException(String string, Throwable thrwble) {
-        super(string, thrwble);
+    public TextoNumeroException(String string, Throwable thrwbl) {
+        super(string, thrwbl);
     }
 
     public TextoNumeroException(Throwable thrwbl) {
