@@ -16,7 +16,27 @@
                 </configuration>
             </plugin>
             
-<!--            <plugin>
+            <plugin>
+			  <groupId>org.codehaus.mojo</groupId>
+			  <artifactId>exec-maven-plugin</artifactId>
+			  <version>1.2.1</version>
+			  <executions>
+			    <execution>
+			      <goals>
+			        <goal>java</goal>
+			      </goals>
+			    </execution>
+			  </executions>
+			  <configuration>
+			    <mainClass>es.josejava.Main</mainClass>
+<!--			    <arguments>-->
+<!--			      <argument>foo</argument>-->
+<!--			      <argument>bar</argument>-->
+<!--			    </arguments>-->
+			  </configuration>
+			</plugin>
+            
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.2</version>
@@ -28,7 +48,7 @@
                     </manifest>
                   </archive>
                 </configuration>
-            </plugin>-->
+            </plugin>
         </plugins>
     </build>
     <properties>
