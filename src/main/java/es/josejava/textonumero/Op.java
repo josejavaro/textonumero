@@ -13,6 +13,8 @@ import java.util.ArrayList;
  * @author jose-java
  */
 public class Op {
+	
+	private boolean ya;
     
     protected String quitaTildes(String input) {
         return quitaTildes(input, true);

@@ -15,8 +15,8 @@ public class TextoNumeroException extends Exception {
         super(string);
     }
 
-    public TextoNumeroException(String string, Throwable thrwbl) {
-        super(string, thrwbl);
+    public TextoNumeroException(String string, Throwable thrwble) {
+        super(string, thrwble);
     }
 
     public TextoNumeroException(Throwable thrwbl) {

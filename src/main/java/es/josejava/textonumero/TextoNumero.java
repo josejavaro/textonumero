@@ -32,6 +32,7 @@ public class TextoNumero extends Op {
     private boolean autodetectaDecimalesMoneda = true;
     private final String[] juntarCientos = new String[]{"dos cientos", "dos cientas", "tres cientos", "tres cientas", "cuatro cientos", "cuatro cientas", "seis cientos", "seis cientas", "ocho cientos", "ocho cientas"};
     private final String[] eliminaTexto = new String[]{"y", "de"};
+    private boolean ya;
     
     
     public TextoNumero() {
