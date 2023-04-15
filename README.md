@@ -147,3 +147,7 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     } catch(TextoNumeroException ex) {
         System.out.println(ex.getMessage());
     }
+    
+# Licencia
+Copyright (c) 2023-presente <a href='https://github.com/josejavaro'>Jose Java</a><br>
+Licencia <a href='https://github.com/josejavaro/textonumero/blob/main/LICENSE'>MIT</a>
