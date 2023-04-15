@@ -5,11 +5,22 @@ Posibilidad de añadir nombres de monedas al número convertido a texto. Tambié
 Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de Android.
 # Clonar & Descargar
 - Puedes clonar el repositorio Git como proyecto Maven.
-- Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201): https://github.com/josejavaro/textonumero/releases/download/1.1.9/textonumero-1.1.9.jar
+- También puedes añadir el repositorio a tu proyecto Maven. En tu pom.xml añade:
+
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+        <dependency>
+            <groupId>com.github.josejavaro</groupId>
+            <artifactId>textonumero</artifactId>
+            <version>1.1.12</version>
+        </dependency>
+- Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201): https://github.com/josejavaro/textonumero/releases/download/1.1.12/textonumero-1.1.12.jar
 - En proyectos de Android añade la depencencia en el Gradle (App):
     
         dependencies {
-            implementation 'com.github.josejavaro:textonumero:1.1.0'
+            implementation 'com.github.josejavaro:textonumero:1.1.12'
         }
     
     Puede ser necesario añadir también el repositorio a GitHub(JitPack) en el Gradle (Build):
@@ -147,3 +158,7 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     } catch(TextoNumeroException ex) {
         System.out.println(ex.getMessage());
     }
+    
+# Licencia
+Copyright (c) 2023-presente <a href='https://github.com/josejavaro'>Jose Java</a><br>
+Licencia <a href='https://github.com/josejavaro/textonumero/blob/main/LICENSE'>MIT</a>
