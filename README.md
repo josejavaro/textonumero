@@ -69,7 +69,7 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
         System.out.println(pais);
     });
     
-    //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Reino Unido.
+    //Convertir de número a texto asignando una moneda de otro país que no esté soportada. P.ej: Inglaterra
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("libra", "penique");
     textoNumero.setMonedaFemenino(true);
@@ -139,7 +139,7 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     System.out.println(numero);
     //Salida: 4012.08 €
     
-    //Convertir texto a número con salida String y con símbolo de moneda de un país no soportado, por ejemplo del Reino Unido
+    //Convertir texto a número con salida String y con símbolo de moneda de un país no soportado, por ejemplo de Inglaterra
     textoNumero = new TextoNumero();
     textoNumero.setMonedaSimbolo("£");
     textoNumero.setRedondeo(2);            
