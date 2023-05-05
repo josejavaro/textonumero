@@ -154,6 +154,17 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     System.out.println(numero);
     //Salida: 4012.08 £    
     
+    //Convertir texto a número con salida String con formato de moneda pero sin el símbolo de la moneda
+    //Se puede usar en métodos Object.setText(String s) en componentes de UI como JTextField o EditText que contengan campos de precios
+    //Con esto evitamos que aparezca el símbolo de la moneda al final de número y así puede ser editado más fácilmente por el usuario posteriormente
+    textoNumero = new TextoNumero();
+    textoNumero.setMoneda("ES");
+    textoNumero.anularMonedaSimbolo();
+    String numero = textoNumero.doubleValueAsString("ciento veinticinco mil novecientos con nueve");
+    //EditText.setText(numero);
+    System.out.println(numero);
+    //Salida: 125900.09
+    
     //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como:
     //veintiocho doce (se convertiría en veintiocho con doce)
     textoNumero = new TextoNumero();
