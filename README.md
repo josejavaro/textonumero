@@ -131,6 +131,13 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     System.out.println(valor);
     //Salida: 4.06
     
+    //Reconocimiento de monedas sueltas sin necesidad de decir toda la frase
+    textoNumero = new TextoNumero();
+    textoNumero.setMoneda("ES");
+    double numero = textoNumero.doubleValue("cinco céntimos");
+    System.out.println(numero);
+    //Salida: 0.05
+    
     //Convertir texto a número con salida String y con el símbolo de moneda
     //Por ejemplo quiero convertir el texto "cuatro mil doce con ocho" a número y con el símbolo de moneda de España
     textoNumero = new TextoNumero();
