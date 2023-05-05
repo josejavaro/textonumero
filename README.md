@@ -45,21 +45,21 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     //Convertir de texto a número con redondeo a 2 decimales
     textoNumero = new TextoNumero();
     textoNumero.setRedondeo(2);
-    d = textoNumero.doubleValue("cuarenta y cinco con ochocientos cuarenta y ocho");
+    double d = textoNumero.doubleValue("cuarenta y cinco con ochocientos cuarenta y ocho");
     System.out.println(d);
     //Salida: 45.85
 
     //Convertir de número a texto asignando la moneda por defecto en España (euro)
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("ES");
-    texto = textoNumero.toString(239273947.45);
+    String texto = textoNumero.toString(239273947.45);
     System.out.println(texto);
     //Salida: doscientos treinta y nueve millones doscientos setenta y tres mil novecientos cuarenta y siete euros con cuarenta y cinco céntimos
     
     //Convertir de número a texto asignando la moneda por defecto en Argentina (pesos argentinos)
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("AR");
-    texto = textoNumero.toString(672746.91);
+    String texto = textoNumero.toString(672746.91);
     System.out.println(texto);
     //Salida: seiscientos setenta y dos mil setecientos cuarenta y seis pesos argentinos con noventa y un centavos
     
@@ -73,7 +73,7 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("libra", "penique");
     textoNumero.setMonedaFemenino(true);
-    texto = textoNumero.toString(781.13);
+    String texto = textoNumero.toString(781.13);
     System.out.println(texto);
     //Salida: setecientas ochenta y una libras con trece peniques
     
@@ -87,14 +87,14 @@ Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de An
     //Convertir a texto (dígitos unitarios) desde número
     textoNumero = new TextoNumero();
     textoNumero.setDigitosUnitarios(true);
-    texto = textoNumero.toString(78373);
+    String texto = textoNumero.toString(78373);
     System.out.println(texto);
     //Salida: siete ocho tres siete tres
     
     //Convertir a texto de dígitos unitarios desde número grande
     textoNumero = new TextoNumero();
     textoNumero.setDigitosUnitarios(true);
-    texto = textoNumero.toString(new BigInteger("4082000005000000439"));
+    String texto = textoNumero.toString(new BigInteger("4082000005000000439"));
     System.out.println(texto);
     //Salida: cuatro cero ocho dos cero cero cero cero cero cinco cero cero cero cero cero cero cuatro tres nueve
     
