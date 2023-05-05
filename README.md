@@ -17,7 +17,7 @@ En Android se puede usar en añadido al reconocimiento de voz de la clase androi
             <artifactId>textonumero</artifactId>
             <version>1.1.12</version>
         </dependency>
-- Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201): https://github.com/josejavaro/textonumero/releases/download/1.1.12/textonumero-1.1.12.jar
+- Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201) (También se puede descargar para proyectos de Android, aunque en este caso deberás de añadir a tus dependencias el archivo jar localizada dentro de tu PC): https://github.com/josejavaro/textonumero/releases/download/1.1.12/textonumero-1.1.12.jar
 - En proyectos de Android añade la depencencia en el Gradle (App):
     
         dependencies {
