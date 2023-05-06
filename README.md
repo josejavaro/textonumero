@@ -166,6 +166,17 @@ En Android se puede usar en añadido al reconocimiento de voz de la clase androi
     System.out.println(numero);
     //Salida: 125900.09
     
+    //Se pueden añadir palabras no determinantes que son las palabras que no tienen un contenido relevante cuando se convierte de texto a número
+    //Estas palabras no se tienen en cuenta en la conversión
+    //P. ej: se puede añadir la palabra no determinante 'más' en este caso:
+    textoNumero = new TextoNumero();
+    textoNumero.setMoneda("ES");
+    textoNumero.addPalabraNoDeterminante("más");            
+    String valor = textoNumero.doubleValueAsString("veinte millones más ocho");
+    System.out.println(valor);
+    //Salida: 20000008.00 €
+    //Si no se especificase esta palabra no determinante daría un error de TextoNumeroException    
+    
     //Por defecto cuando se usa moneda TextoNumero detecta la posición decimal en cantidades como:
     //veintiocho doce (se convertiría en veintiocho con doce)
     textoNumero = new TextoNumero();
