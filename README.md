@@ -166,8 +166,8 @@ En Android se puede usar en añadido al reconocimiento de voz de la clase androi
     System.out.println(numero);
     //Salida: 125900.09
     
-    //Se pueden añadir palabras no determinantes que son las palabras que no tienen un contenido relevante cuando se convierte de texto a número
-    //Estas palabras no se tienen en cuenta en la conversión
+    //Se pueden añadir palabras no determinantes que son las palabras que no tienen un contenido relevante en la frase
+    //Estas palabras no se tienen en cuenta en la conversión de texto a número
     //P. ej: se puede añadir la palabra no determinante 'más' en este caso:
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("ES");
