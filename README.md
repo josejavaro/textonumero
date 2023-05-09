@@ -168,6 +168,7 @@ En Android se puede usar en añadido al reconocimiento de voz de la clase androi
     
     //Se pueden añadir palabras no determinantes que son las palabras que no tienen un contenido relevante en la frase
     //Estas palabras no se tienen en cuenta en la conversión de texto a número
+    //En AI se conocen también como "Stop Words"
     //P. ej: se puede añadir la palabra no determinante 'más' en este caso:
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("ES");
