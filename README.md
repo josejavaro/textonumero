@@ -132,7 +132,7 @@ En Android se puede usar en añadido al reconocimiento de voz de la clase androi
     System.out.println(valor);
     //Salida: 4.06
     
-    //Reconocimiento de monedas sueltas sin necesidad de decir toda la frase
+    //Reconocimiento de monedas fraccionadas sin necesidad de decir toda la frase
     textoNumero = new TextoNumero();
     textoNumero.setMoneda("ES");
     double numero = textoNumero.doubleValue("cinco céntimos");
