@@ -3,7 +3,7 @@ Es una librería escrita en Java que convierte de texto a número y de número a
 Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Características y Uso" más abajo.
 # ¿Donde se puede usar?
 Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de Android.
-En Android se puede usar en añadido al reconocimiento de voz de la clase android.speech.RecognizerIntent para convertir a número el texto recibido por esta clase.
+En Android se puede usar en añadido al reconocimiento de voz de la clase android.speech.RecognizerIntent para convertir a número el texto recibido por esta clase y es válido para introducir precios o stock de artículos entre otras posibilidades de introducción de números mediante voz.
 # Clonar & Descargar
 - Puedes clonar el repositorio Git como proyecto Maven.
 - También puedes añadir el repositorio a tu proyecto Maven. En tu pom.xml añade:
