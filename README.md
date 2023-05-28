@@ -1,5 +1,5 @@
 # ¿Que es TextoNumero?
-Es una librería escrita en Java que convierte de texto a número y de número a texto alfabético en español, con o sin decimales.
+Es una librería escrita en Java que convierte de texto (letras) a número y de número a texto alfabético en español, con o sin decimales.
 Posibilidad de añadir nombres de monedas al número convertido a texto. También tiene varias opciones que se pueden consultar en el apartado "Características y Uso" más abajo.
 # ¿Donde se puede usar?
 Se puede usar en aplicaciones de escritorio/servidores Java y en proyectos de Android.
