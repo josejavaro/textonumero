@@ -15,13 +15,13 @@ En Android se puede usar en añadido al reconocimiento de voz de la clase androi
         <dependency>
             <groupId>com.github.josejavaro</groupId>
             <artifactId>textonumero</artifactId>
-            <version>1.2.6</version>
+            <version>1.2.9</version>
         </dependency>
-- Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201) (También se puede descargar para proyectos de Android, aunque en este caso deberás de añadir a tus dependencias el archivo jar localizado en una carpeta dentro de tu PC): https://github.com/josejavaro/textonumero/releases/download/1.2.6/textonumero-1.2.6.jar
+- Programas de escritorio/servidores: Descarga la librería JAR desde aquí (JDK 8.0_201) (También se puede descargar para proyectos de Android, aunque en este caso deberás de añadir a tus dependencias el archivo jar localizado en una carpeta dentro de tu PC): https://github.com/josejavaro/textonumero/releases/download/1.2.9/textonumero-1.2.9.jar
 - En proyectos de Android añade la depencencia en el Gradle (App):
     
         dependencies {
-            implementation 'com.github.josejavaro:textonumero:1.2.6'
+            implementation 'com.github.josejavaro:textonumero:1.2.9'
         }
     
     Puede ser necesario añadir también el repositorio a GitHub(JitPack) en el Gradle (Build):
