@@ -12,6 +12,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 
 /**
  *
@@ -20,10 +21,12 @@ import java.util.Arrays;
 public class TextoNumero extends Op {
     
     private boolean esMoneda;
+    private boolean esMonedaSimbolo;
     private String tipoMonedaEnteros = "";
     private String tipoMonedaCentimos = "";
     private String tipoMonedaEnterosPlural = "";
     private String tipoMonedaCentimosPlural = "";
+    private String tipoMonedaSimbolo = "";
     private int redondeoDecimales;
     private boolean digitosUnitarios;
     private String separadorEnterosDecimales = "con";
@@ -31,7 +34,8 @@ public class TextoNumero extends Op {
     private boolean monedaFemenino;
     private boolean autodetectaDecimalesMoneda = true;
     private final String[] juntarCientos = new String[]{"dos cientos", "dos cientas", "tres cientos", "tres cientas", "cuatro cientos", "cuatro cientas", "seis cientos", "seis cientas", "ocho cientos", "ocho cientas"};
-    private final String[] eliminaTexto = new String[]{"y", "de"};
+    private ArrayList<String> palabrasNoDeterminantes = new ArrayList<>(Arrays.asList(new String[]{"y", "de"}));
+    
         
     
     public TextoNumero() {
@@ -42,19 +46,19 @@ public class TextoNumero extends Op {
         this.digitosUnitarios = digitosUnitarios;
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaCentimos) throws TextoNumeroException {
+    public void setMoneda(String tipoMonedaEnteros, String tipoMonedaCentimos) throws TextoNumeroException {
         setMoneda(tipoMonedaEnteros, "", tipoMonedaCentimos, "", 2);
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaCentimos, int redondeoCentimos) throws TextoNumeroException {
-        setMoneda(tipoMonedaEnteros, "", tipoMonedaCentimos, "", redondeoCentimos);
+    public void setMoneda(String tipoMonedaEnteros, String tipoMonedaCentimos, int redondeoDecimales) throws TextoNumeroException {
+        setMoneda(tipoMonedaEnteros, "", tipoMonedaCentimos, "", redondeoDecimales);
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural) throws TextoNumeroException {
+    public void setMoneda(String tipoMonedaEnteros, String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural) throws TextoNumeroException {
         setMoneda(tipoMonedaEnteros, tipoMonedaEnterosPlural, tipoMonedaCentimos, tipoMonedaCentimosPlural, 2);
     }
 
-    public void setMoneda(String tipoMonedaEnteros,String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural, int redondeoDecimales) throws TextoNumeroException {
+    public void setMoneda(String tipoMonedaEnteros, String tipoMonedaEnterosPlural, String tipoMonedaCentimos, String tipoMonedaCentimosPlural, int redondeoDecimales) throws TextoNumeroException {
         anularMoneda();
 
         tipoMonedaEnteros = tipoMonedaEnteros == null ? "" : tipoMonedaEnteros.trim();
@@ -68,13 +72,14 @@ public class TextoNumero extends Op {
         if(tipoMonedaCentimos.equals(""))
             throw new TextoNumeroException("tipoMonedaCentimos no puede estar vacío");
 
-        
-        this.esMoneda = true;
+        esMoneda = true;
+        esMonedaSimbolo = false;
+        tipoMonedaSimbolo = "";        
         this.redondeoDecimales = redondeoDecimales;
         this.tipoMonedaEnteros = dameMoneda(tipoMonedaEnteros);
         this.tipoMonedaCentimos = dameMoneda(tipoMonedaCentimos);
-        this.tipoMonedaEnterosPlural = tipoMonedaEnterosPlural.equals("") ? ponPlural(this.tipoMonedaEnteros) : tipoMonedaEnterosPlural;
-        this.tipoMonedaCentimosPlural = tipoMonedaCentimosPlural.equals("") ? ponPlural(this.tipoMonedaCentimos) : tipoMonedaCentimosPlural;
+        this.tipoMonedaEnterosPlural = tipoMonedaEnterosPlural.equals("") ? getPlural(this.tipoMonedaEnteros) : tipoMonedaEnterosPlural;
+        this.tipoMonedaCentimosPlural = tipoMonedaCentimosPlural.equals("") ? getPlural(this.tipoMonedaCentimos) : tipoMonedaCentimosPlural;
     }
 
     public void setMoneda(String pais) throws TextoNumeroException {
@@ -88,9 +93,20 @@ public class TextoNumero extends Op {
         asignaMoneda(pais, redondeoDecimales);
     }
     
+    public void setMonedaSimbolo(String tipoMonedaSimbolo) {
+    	esMoneda = true;
+    	esMonedaSimbolo = true;
+    	this.tipoMonedaSimbolo = tipoMonedaSimbolo;
+    }
+    
     public void anularMoneda(boolean anularDecimales) {
         esMoneda = false;
+        esMonedaSimbolo = false;
         redondeoDecimales = anularDecimales ? 0 : redondeoDecimales;
+    }
+    
+    public void anularMonedaSimbolo() {
+        esMonedaSimbolo = false;
     }
 
     public void anularMoneda() {
@@ -111,13 +127,15 @@ public class TextoNumero extends Op {
             if(pais[0].equals(codigoPais.trim())) {
                 tipoMonedaEnteros = pais[2];
                 tipoMonedaCentimos = pais[3];
+                tipoMonedaSimbolo = pais[4];
                 break;
             }    
         }
 
         esMoneda = true;
-        tipoMonedaEnterosPlural = ponPlural(tipoMonedaEnteros);
-        tipoMonedaCentimosPlural = ponPlural(tipoMonedaCentimos);
+        esMonedaSimbolo = true;
+        tipoMonedaEnterosPlural = getPlural(tipoMonedaEnteros);
+        tipoMonedaCentimosPlural = getPlural(tipoMonedaCentimos);
         this.redondeoDecimales = redondeoDecimales;
     }
     
@@ -126,30 +144,41 @@ public class TextoNumero extends Op {
 //        https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
         
         String[][] paises = new String[][]{
-            {"ES", "España", "euro", "céntimo"},
-            {"AR", "Argentina", "peso argentino", "centavo"},
-            {"CL", "Chile", "peso chileno", "centavo"},
-            {"CO", "Colombia", "peso colombiano", "centavo"},
-            {"DO", "República Dominicana", "peso dominicano", "centavo"},
-            {"CR", "Costa Rica", "colón", "centavo"},
-            {"SV", "El Salvador", "dólar", "centavo"},
-            {"EC", "Ecuador", "dólar", "centavo"},
-            {"PR", "Puerto Rico", "dólar", "centavo"},
-            {"PA", "Panamá", "balboa", "centésimo"},
-            {"PA-DOLAR", "Panamá", "dólar", "centavo"},
-            {"US", "Estados Unidos", "dólar", "centavo"},
-            {"GT", "Guatemala", "quetzal", "centavo"},
-            {"HN", "Honduras", "lempira", "centavo"},
-            {"MX", "México", "peso mexicano", "centavo"},
-            {"NI", "Nicaragua", "córdoba", "centavo"},
-            {"PE", "Perú", "sol", "céntimo"},
-            {"PY", "Paraguay", "guaraní", "céntimo"},
-            {"UY", "Uruguay", "peso uruguayo", "centésimo"},
-            {"VE", "Venezuela", "bolivar", "céntimo"},
-            {"BO", "Bolivia", "boliviano", "centavo"},
+            {"ES", "España", "euro", "céntimo", "€"},
+            {"AR", "Argentina", "peso argentino", "centavo", "$"},
+            {"CL", "Chile", "peso chileno", "centavo", "$"},
+            {"CO", "Colombia", "peso colombiano", "centavo", "$"},
+            {"DO", "República Dominicana", "peso dominicano", "centavo", "RD$"},
+            {"CR", "Costa Rica", "colón", "centavo", "₡"},
+            {"SV", "El Salvador", "dólar", "centavo", "$"},
+            {"EC", "Ecuador", "dólar", "centavo", "$"},
+            {"PR", "Puerto Rico", "dólar", "centavo", "$"},
+            {"PA", "Panamá", "balboa", "centésimo", "B/"},
+            {"PA-DOLAR", "Panamá", "dólar", "centavo", "$"},
+            {"US", "Estados Unidos", "dólar", "centavo", "$"},
+            {"GT", "Guatemala", "quetzal", "centavo", "Q"},
+            {"HN", "Honduras", "lempira", "centavo", "L"},
+            {"MX", "México", "peso mexicano", "centavo", "$"},
+            {"NI", "Nicaragua", "córdoba", "centavo", "C$"},
+            {"PE", "Perú", "sol", "céntimo", "S/"},
+            {"PY", "Paraguay", "guaraní", "céntimo", "₲"},
+            {"UY", "Uruguay", "peso uruguayo", "centésimo", "$"},
+            {"VE", "Venezuela", "bolivar", "céntimo", "Bs"},
+            {"BO", "Bolivia", "boliviano", "centavo", "Bs"},
         };
         
         //ordenar el array por el código de país
+        
+        //Java 7
+//        java.util.Arrays.sort(paises, new java.util.Comparator<String[]>() {
+//			@Override
+//			public int compare(String[] o1, String[] o2) {
+//				// TODO Auto-generated method stub
+//				return o1[0].compareTo(o2[0]);
+//			}
+//        });
+        
+        //Java 8 (con lambda):
         Arrays.sort(paises, (String[] a, String[] b) -> a[0].compareTo(b[0]));
         
         return paises;
@@ -173,7 +202,7 @@ public class TextoNumero extends Op {
         this.autodetectaDecimalesMoneda = autodetectaDecimalesMoneda;
     }
 
-    private String ponPlural(String palabra) {
+    private String getPlural(String palabra) {
         ArrayList<String> vocales = new ArrayList<>(Arrays.asList(new String[]{"a", "e", "o", "u"}));
         String[] palabraArray = palabra.trim().split("\\s+");
         palabra = "";
@@ -203,9 +232,6 @@ public class TextoNumero extends Op {
         return (moneda.endsWith("s") ? moneda.substring(0, moneda.length() - 1) : moneda).trim();
     }
     
-//    private Object[] getTextoNumero(boolean llardos) {
-//        return getTextoNumero(llardos);        
-//    }
 
     @SuppressWarnings("unchecked")
     private ArrayList<String> getTexto(boolean llardos) {
@@ -228,10 +254,25 @@ public class TextoNumero extends Op {
             throw new TextoNumeroException("No se ha especificado un separador de decimales ya que está vacío");
         else if(((ArrayList<String>)getTexto(true)).indexOf(separadorEnterosDecimales) != -1) 
             throw new TextoNumeroException("Separador de decimales no válido: " + separadorEnterosDecimales + " es una cantidad númerica en texto");
+        else if(palabrasNoDeterminantes.indexOf(separadorEnterosDecimales) != -1) 
+            throw new TextoNumeroException("Separador de decimales no válido: " + separadorEnterosDecimales + " es una palabra no determinante");
             
         this.separadorEnterosDecimales = separadorEnterosDecimales;
-        if(!this.separadoresEnterosDecimales.contains(separadorEnterosDecimales))
-            this.separadoresEnterosDecimales.add(separadorEnterosDecimales);
+        if(!separadoresEnterosDecimales.contains(separadorEnterosDecimales))
+            separadoresEnterosDecimales.add(separadorEnterosDecimales);
+    }
+    
+    public void addPalabraNoDeterminante(String palabraNoDeterminante) throws TextoNumeroException{
+    	palabraNoDeterminante = palabraNoDeterminante.trim().toLowerCase();
+    	
+    	if(palabraNoDeterminante.equals(""))
+            throw new TextoNumeroException("No se ha especificado una palabra no determinante ya que está vacía");
+    	else if(((ArrayList<String>)getTexto(true)).indexOf(palabraNoDeterminante) != -1) 
+            throw new TextoNumeroException("Palabra no determinante no válida: " + palabraNoDeterminante + " es una cantidad númerica en texto");
+    	else if(separadorEnterosDecimales.indexOf(palabraNoDeterminante) != -1) 
+            throw new TextoNumeroException("Palabra no determinante no válida: " + palabraNoDeterminante + " es un separador de enteros - decimales");
+    	
+    	palabrasNoDeterminantes.add(palabraNoDeterminante);
     }
 
     public int intValue(String textoAConvertir) throws TextoNumeroException {
@@ -239,7 +280,7 @@ public class TextoNumero extends Op {
 
         int valorEntero = bigInteger.intValue();
         if(bigInteger.compareTo(new BigInteger(Integer.toString(valorEntero))) != 0)
-            throw new TextoNumeroException("Valor muy grande para un número entero: " + textoAConvertir);
+            throw new TextoNumeroException("Valor muy grande para un número entero: ".concat(textoAConvertir).concat(". Usa BigInteger"));
 
         return valorEntero;
     }
@@ -253,7 +294,7 @@ public class TextoNumero extends Op {
 
         long valorLargo = bigInteger.longValue();
         if(bigInteger.compareTo(new BigInteger(Long.toString(valorLargo))) != 0)
-            throw new TextoNumeroException("Valor muy grande para un número entero largo: " + textoAConvertir);
+            throw new TextoNumeroException("Valor muy grande para un número entero largo: ".concat(textoAConvertir).concat(". Usa BigInteger"));
 
         return valorLargo;
     }
@@ -271,19 +312,32 @@ public class TextoNumero extends Op {
 
         double valorFinal = valor.doubleValue();
         if(valor.compareTo(BigDecimal.valueOf(valorFinal)) != 0)
-            throw new TextoNumeroException("Valor muy grande para un número doble: " + textoAConvertir);
+            throw new TextoNumeroException("Valor muy grande para un número doble: ".concat(textoAConvertir).concat(". Usa BigDecimal"));
 
         return valorFinal;
+    }
+    
+    public String doubleValueAsString(String textoAConvertir) throws TextoNumeroException {
+    	return redondea(new BigDecimal(Double.toString(doubleValue(textoAConvertir))));
     }
 
     public float floatValue(String textoAConvertir) throws TextoNumeroException {
         BigDecimal valor = bigDecimalValue(textoAConvertir);
-
         float valorFinal = valor.floatValue();
-        if(valor.compareTo(BigDecimal.valueOf(valorFinal)) != 0)
-            throw new TextoNumeroException("Valor muy grande para un número doble");
+        BigDecimal valorComparar = new BigDecimal(Float.toString(valorFinal));
+        
+        if(valorComparar.compareTo(valor) != 0)
+            throw new TextoNumeroException("Valor muy grande para un número flotante".concat(textoAConvertir).concat(". Usa BigDecimal"));
 
         return valorFinal;
+    }
+    
+    public String floatValueAsString(String textoAConvertir) throws TextoNumeroException {
+    	return redondea(new BigDecimal(Float.toString(floatValue(textoAConvertir))));
+    }
+    
+    public String bigDecimalValueAsString(String textoAConvertir) throws TextoNumeroException {
+    	return redondea(bigDecimalValue(textoAConvertir));
     }
 
     public BigDecimal bigDecimalValue(String textoAConvertir) throws TextoNumeroException {
@@ -303,15 +357,13 @@ public class TextoNumero extends Op {
             separadorDecimales.add(quitaTildes(separaEnterosDecimales));
         }
 
-        if(esMoneda) {
-            separadorDecimales.add(quitaTildes(tipoMonedaEnterosPlural));
-            separadorDecimales.add(quitaTildes(tipoMonedaEnteros));
-        }
-        
+    	separadorDecimalesTotal.addAll(getListaMonedas(true));
+    	separadorDecimales.addAll(getListaMonedas(true));        	
+            	
         int cuentaCerosIzquierdaDecimal = 0;
         int dondeSeparadorDecimales = -1;
         String[] enterosDecimales = new String[2];
-        textoAConvertir = quitaTildes(textoAConvertir.toLowerCase());
+        textoAConvertir = quitaTildes(textoAConvertir.toLowerCase()).concat(" ");
         
         //Evitar que se introduzcan valores con el separador de decimales "y" como: trescientos euros y un céntimo
         //Cambiar a: trescientos euros con un céntimo
@@ -321,7 +373,7 @@ public class TextoNumero extends Op {
                 int dondeMonedaEnteros = Math.max(listaTextoAConvertir.indexOf(tipoMonedaEnteros), listaTextoAConvertir.indexOf(tipoMonedaEnterosPlural));
                 if(listaTextoAConvertir.get(dondeMonedaEnteros + 1).equals("y"))
                     listaTextoAConvertir.set(dondeMonedaEnteros + 1, "con");
-                textoAConvertir = String.join(" ", listaTextoAConvertir);
+                textoAConvertir = String.join(" ", listaTextoAConvertir).concat(" ");                
             } catch(IndexOutOfBoundsException e) {}        
         }
 
@@ -337,16 +389,48 @@ public class TextoNumero extends Op {
                 textoAConvertir = textoAConvertir.replace(separador, " ".concat(separador).concat(" "));
             }
         }
+        
+        if(esMoneda) {        	        
+        	ArrayList<String> enterosDecimalesList = new ArrayList<>(getListaMonedas(true));
+        	int cuantosEnterosDecimales = enterosDecimalesList.size();
+        	int dondeEnteros = textoAConvertir.length();
+        	for(String enteroDecimal : enterosDecimalesList) {
+        		int dondeEnterosTmp = textoAConvertir.indexOf(" ".concat(enteroDecimal).concat(" "));
+        		if(dondeEnterosTmp != -1)
+        			dondeEnteros = Math.min(dondeEnterosTmp, dondeEnteros);
+        	}
+        	
+        	enterosDecimalesList = new ArrayList<>(getListaMonedas(false));
+        	if(dondeEnteros != textoAConvertir.length()) {
+        		//Comprobar que no haya textos con la parte decimal antes que la parte entera
+	        	try {
+		        	for(int a = cuantosEnterosDecimales; a < enterosDecimalesList.size(); a++) {
+		        		int dondeDecimalesTmp = textoAConvertir.indexOf(" ".concat(enterosDecimalesList.get(a)).concat(" ")); 
+		        		if(dondeDecimalesTmp != -1 && dondeDecimalesTmp < dondeEnteros)
+		        			throw new TextoNumeroException("La parte decimal no puede estar antes que la parte entera: Texto:" + textoAConvertir);
+		        	}
+	        	} catch(IndexOutOfBoundsException e) {}
+        	} else {
+        		//Comprobar también si se refiere solo a la parte fraccional de la moneda
+        		String[] textoAConvertirArray = textoAConvertir.split("\\s+");
+        		for(int a = cuantosEnterosDecimales; a < enterosDecimalesList.size(); a++) {
+        			if(textoAConvertirArray[textoAConvertirArray.length - 1].equals(enterosDecimalesList.get(a))) {
+        				dondeSeparadorDecimales = 0;
+        				break;
+        			}
+        		}
+        	}
+        }
 
         for(String separador : separadorDecimales) {
-            int donde = textoAConvertir.indexOf(" " + separador + " ");
+            int donde = textoAConvertir.indexOf(" ".concat(separador).concat(" "));
             if(donde != -1) {
-                textoAConvertir = textoAConvertir.replace(separador + " ", "");
+                textoAConvertir = textoAConvertir.replace(" ".concat(separador).concat(" "), " ");
                 dondeSeparadorDecimales = donde;
                 break;
             }
         }
-        
+                
         if(esMoneda && dondeSeparadorDecimales == -1 && autodetectaDecimalesMoneda) 
             dondeSeparadorDecimales = detectaDecimalesMoneda(textoAConvertir);
 
@@ -380,8 +464,6 @@ public class TextoNumero extends Op {
         valor = valor.divide(new BigDecimal(valorDecimal));
         valor = valor.add(new BigDecimal(resultado[0]));
 
-//        if(esMoneda || redondeoDecimales != 0)
-//        valor = valor.setScale(redondeoDecimales == 0 ? valorDecimal.toString().length() - 1 : (redondeoDecimales > valorDecimal.toString().length() - 1 ? valorDecimal.toString().length() - 1 : redondeoDecimales), RoundingMode.HALF_UP);
         if(redondeoDecimales != 0)
             valor = valor.setScale(redondeoDecimales > valorDecimal.toString().length() - 1 ? valorDecimal.toString().length() - 1 : redondeoDecimales, RoundingMode.HALF_UP);
 
@@ -453,7 +535,7 @@ public class TextoNumero extends Op {
                     valor[1] = Integer.toString(Integer.parseInt(enteroDecimal[1]) * (Integer.parseInt(dameCeros(redondeoDecimales - valor[1].length()))));
 
                 for(int a = 0; a < valor.length; a++) 
-                    valor[a] = toStringPriv(new BigInteger(valor[a])).trim();
+                    valor[a] = toStringPriv(new BigInteger(valor[a]), a == 1).trim();
 
                 BigInteger bigIntegerEurosParteEntera = convierteTextoANumero(valor[0], false);
                 String[] monedas = getMoneda(valor[0], valor[1]);
@@ -504,8 +586,9 @@ public class TextoNumero extends Op {
         int dondeMillon = numero.indexOf(BigInteger.valueOf(1000000));        
 
         textoAConvertir = quitaTildes(textoAConvertir.trim().toLowerCase(), true);
+        textoAConvertir = textoAConvertir.equals("") ? "0" : textoAConvertir;
 
-        try {
+        try {        	
             numeroFinal = new BigInteger(textoAConvertir);
             return numeroFinal;
         } catch(NumberFormatException e) {}
@@ -513,7 +596,7 @@ public class TextoNumero extends Op {
         for(int a = 0; a < texto.size(); a++)
             texto.set(a, quitaTildes(texto.get(a), true));
         
-        textoAConvertir = procesaTexto(textoAConvertir, true);
+        textoAConvertir = procesaTexto(textoAConvertir, true, true);
         
         String[] textos = quitaTildes(textoAConvertir).split("\\s+");
 
@@ -524,8 +607,10 @@ public class TextoNumero extends Op {
                 try {
                     long numeroATexto = Long.parseLong(textos[a]);
                     String textoReemplazar = toString(numeroATexto);
-                    for (String eliminaTexto1 : eliminaTexto) 
-                        textoReemplazar = textoReemplazar.replace(" " + eliminaTexto1 + " ", " ");
+                    for (String palabraNoDeterminante : palabrasNoDeterminantes) {
+                        textoReemplazar = textoReemplazar.replace(" " + palabraNoDeterminante + " ", " ");
+                        textoReemplazar = textoReemplazar.replace(" " + quitaTildes(palabraNoDeterminante) + " ", " ");
+                    }
                     textos[a] = textoReemplazar;
                     textoAConvertir = "";
                     for (String texto1 : textos) {
@@ -536,11 +621,14 @@ public class TextoNumero extends Op {
                     a = -1;
                     
                 } catch(NumberFormatException e) {
-                    //buscar en monedas para quitarlos textos de monedas
-                    if(textos[a].equals(quitaTildes(tipoMonedaEnteros.toLowerCase())) || textos[a].equals(quitaTildes(tipoMonedaEnterosPlural.toLowerCase())) || textos[a].equals(quitaTildes(tipoMonedaCentimos).toLowerCase()) || textos[a].equals(quitaTildes(tipoMonedaCentimosPlural.toLowerCase())))
-                        textosAEliminar.add(textos[a]);
-                    else
-                        throw new TextoNumeroException("Palabra no reconocida: " + textos[a] + ". Texto completo: " + textoAConvertirOriginal);
+                    //buscar en monedas para quitar los textos de monedas
+                	ArrayList<String> tipoMonedaTemp = new ArrayList<>();               		
+                	tipoMonedaTemp.addAll(getListaMonedas(false));
+                	
+                	if(tipoMonedaTemp.contains(textos[a]))
+            			textosAEliminar.add(textos[a]);
+            		else
+            			throw new TextoNumeroException("Palabra no reconocida: " + textos[a] + ". Texto: " + textoAConvertirOriginal);
                 }
             }
 
@@ -554,8 +642,8 @@ public class TextoNumero extends Op {
             }
         }
         if(!textosAEliminar.isEmpty()) {
-            for(String textosAEliminarStr : textosAEliminar) 
-                textoAConvertir = textoAConvertir.replace(textosAEliminarStr, "");
+            for(String textoAEliminar : textosAEliminar) 
+                textoAConvertir = textoAConvertir.replace(textoAEliminar, "");
             textos = textoAConvertir.trim().split("\\s+");
         }
         textoAConvertir = textoAConvertir.trim();
@@ -569,71 +657,81 @@ public class TextoNumero extends Op {
             }
         }
 
-        for(int a = 0; a < textos.length; a++) {
-            if(textos[a].equals("menos")) {
-                if(esParteDecimal)
-                    throw new TextoNumeroException("Palabra 'menos' no permitida en la parte decimal: " + textoAConvertirOriginal);
-                else {
-                    if(a != 0)
-                        throw new TextoNumeroException("Palabra 'menos' no está en el principio de la frase: " + textoAConvertirOriginal);
-                    else
-                        esNegativo = true;
-                }
-            } else {
-                if(sonDigitosUnitarios) {
-                    int dondeTexto = texto.indexOf(textos[a]);
-                    digitosUnitariosStr = digitosUnitariosStr.concat(numero.get(dondeTexto).toString());
-                } else {
-                    int donde = texto.indexOf(textos[a]);                    
-                    BigInteger valorAhora = numero.get(donde);
-                    largoTextoActual += textos[a].length() + 1;                                        
-
-                    if(numeroDigitos.contains(valorAhora.toString().length()) || (ultimoRangoDiezVeintinueve && donde >= texto.indexOf("cero") && donde <= texto.indexOf("nueve")))
-                        throw new TextoNumeroException("Número en texto mal formado: " + textoAConvertirOriginal);
-                    numeroDigitos.add(valorAhora.toString().length());                    
-                    ultimoRangoDiezVeintinueve = donde >= texto.indexOf("diez") && donde <= texto.indexOf("veintinueve");
-
-                    if(donde < dondeAntes) {
-                        valorASumar = valorASumar.add(valorAhora);
-                    } else {
-                        if(donde >= dondeEmpiezaRuptura) {
-                            int valorMayor = -1;
-
-                            //buscar si hay un "miles" mayor que este a partir de esta posición
-                            try {
-                                String subTexto = textoAConvertir.substring(largoTextoActual);
-                                for(int b = donde; b < texto.size() && valorMayor == -1; b++)
-                                    valorMayor = subTexto.indexOf(texto.get(b));
-                            } catch(IndexOutOfBoundsException e) {}
-
-
-                            if(valorMayor >= 0) {
-                                valorASumar = valorASumar.multiply(valorAhora);
-
-                                valorASumarParcial = valorASumarParcial.add(valorASumar);
-                                valorASumar = new BigInteger("0");
-                            } else {
-                                valorASumarParcial = valorASumarParcial.add(valorASumar);
-                                valorASumarParcial = valorASumarParcial.multiply(valorAhora);
-
-                                numeroFinal = numeroFinal.add(valorASumarParcial);
-
-                                valorASumarParcial = BigInteger.ZERO;
-                                valorASumar = BigInteger.ZERO;
-                            }
-
-                            numeroDigitos = new ArrayList<>();
-                        } else {
-                            throw new TextoNumeroException("Número en texto mal formado: " + textoAConvertirOriginal);
-                        }
-                    }
-                    dondeAntes = texto.indexOf(textos[a]);
-                }
-            }
-        }
+        if(!textoAConvertir.trim().equals("")) {
+	        for(int a = 0; a < textos.length; a++) {
+	            if(textos[a].equals("menos")) {
+	                if(esParteDecimal)
+	                    throw new TextoNumeroException("Palabra 'menos' no permitida en la parte decimal: " + textoAConvertirOriginal);
+	                else {
+	                    if(a != 0)
+	                        throw new TextoNumeroException("Palabra 'menos' no está en el principio de la frase: " + textoAConvertirOriginal);
+	                    else
+	                        esNegativo = true;
+	                }
+	            } else {
+	                if(sonDigitosUnitarios) {
+	                    int dondeTexto = texto.indexOf(textos[a]);
+	                    try {
+	                    	digitosUnitariosStr = digitosUnitariosStr.concat(numero.get(dondeTexto).toString());
+	                    } catch(IndexOutOfBoundsException e) {
+	                    	throw new TextoNumeroException("Número en texto mal formado: " + textoAConvertirOriginal);
+	                    }
+	                } else {
+	                    int donde = texto.indexOf(textos[a]);                    
+	                    BigInteger valorAhora = numero.get(donde);
+	                    largoTextoActual += textos[a].length() + 1;                                        
+	
+	                    if(numeroDigitos.contains(valorAhora.toString().length()) || (ultimoRangoDiezVeintinueve && donde >= texto.indexOf("cero") && donde <= texto.indexOf("nueve")))
+	                        throw new TextoNumeroException("Número en texto mal formado: " + textoAConvertirOriginal);
+	                    numeroDigitos.add(valorAhora.toString().length());                    
+	                    ultimoRangoDiezVeintinueve = donde >= texto.indexOf("diez") && donde <= texto.indexOf("veintinueve");
+	
+	                    if(donde < dondeAntes) {
+	                        valorASumar = valorASumar.add(valorAhora);
+	                    } else {
+	                        if(donde >= dondeEmpiezaRuptura) {
+	                            int valorMayor = -1;
+	
+	                            //buscar si hay un "miles" mayor que este a partir de esta posición
+	                            try {
+	                                String subTexto = textoAConvertir.substring(largoTextoActual);
+	                                for(int b = donde; b < texto.size() && valorMayor == -1; b++)
+	                                    valorMayor = subTexto.indexOf(texto.get(b));
+	                            } catch(IndexOutOfBoundsException e) {}
+	
+	
+	                            if(valorMayor >= 0) {
+	                                valorASumar = valorASumar.multiply(valorAhora);
+	
+	                                valorASumarParcial = valorASumarParcial.add(valorASumar);
+	                                valorASumar = new BigInteger("0");
+	                            } else {
+	                                valorASumarParcial = valorASumarParcial.add(valorASumar);
+	                                valorASumarParcial = valorASumarParcial.multiply(valorAhora);
+	
+	                                numeroFinal = numeroFinal.add(valorASumarParcial);
+	
+	                                valorASumarParcial = BigInteger.ZERO;
+	                                valorASumar = BigInteger.ZERO;
+	                            }
+	
+	                            numeroDigitos = new ArrayList<>();
+	                        } else {
+	                            throw new TextoNumeroException("Número en texto mal formado: " + textoAConvertirOriginal);
+	                        }
+	                    }
+	                    dondeAntes = texto.indexOf(textos[a]);
+	                }
+	            }
+	        }
+        } 
 
         if(sonDigitosUnitarios) {
-            numeroFinal = new BigInteger(digitosUnitariosStr);
+        	try {
+        		numeroFinal = new BigInteger(digitosUnitariosStr);
+        	} catch(NumberFormatException e) {
+        		numeroFinal = BigInteger.ZERO;
+        	}
         } else {
             if(!valorASumarParcial.equals(new BigInteger("0")))
                 valorASumar = valorASumar.add(valorASumarParcial);
@@ -644,8 +742,12 @@ public class TextoNumero extends Op {
 
         return esNegativo ? numeroFinal.negate() : numeroFinal;
     }
-
+    
     private String toStringPriv(BigInteger numeroAConvertir) {
+    	return toStringPriv(numeroAConvertir, false);
+    }
+
+    private String toStringPriv(BigInteger numeroAConvertir, boolean esParteDecimal) {
         String textoAConvertir = numeroAConvertir.toString();
         String textoFinal = "";
         String textoTmp = "";
@@ -681,7 +783,7 @@ public class TextoNumero extends Op {
             if((contaTotal % 3 == 0 && a != textoAConvertir.length() - 1) || a == 0) {
                 String tmp = convierteTresDigitosATexto(textoTmp);
                 
-                if(contaTotal <= 6 && esMoneda && monedaFemenino && !tmp.equals("")) {
+                if(contaTotal <= 6 && esMoneda && monedaFemenino && !tmp.equals("") && !esParteDecimal) {
                     String[] monedasPosibleFemenino = new String[]{"uno", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"};
                     for (String monedaPosibleFemenino : monedasPosibleFemenino) 
                         tmp = tmp.replace(monedaPosibleFemenino, getFemenino(monedaPosibleFemenino));
@@ -712,7 +814,7 @@ public class TextoNumero extends Op {
                     }
 
                     if(tmp.trim().endsWith(texto.get(dondeUno)) && !textoMiles.equals("")) 
-                        tmp = cambiaUnoFinal(tmp, textoMiles, dondeMilTotal);
+                        tmp = setUnoFinal(tmp, textoMiles, dondeMilTotal);
 
                     textoFinal = tmp.concat(textoMiles).concat(textoMiles.equals("") ? "" : " ").concat(textoFinal);
                 }
@@ -740,13 +842,13 @@ public class TextoNumero extends Op {
             textoFinal = "menos ".concat(textoFinal);
 
         if(esMoneda && textoFinal.endsWith(texto.get(dondeUno))) 
-            textoFinal = cambiaUnoFinal(textoFinal, "", texto.size());        
+            textoFinal = setUnoFinal(textoFinal, "", texto.size());        
         
         return textoFinal;
     }
 
     
-    private String cambiaUnoFinal(String tmp, String textoMiles, int dondeMilTotal) {
+    private String setUnoFinal(String tmp, String textoMiles, int dondeMilTotal) {
         ArrayList<String> texto = getTexto(false);
         ArrayList<BigInteger> numero = getNumero(false);
         int dondeMillon = numero.indexOf(BigInteger.valueOf(1000000));
@@ -929,17 +1031,24 @@ public class TextoNumero extends Op {
             return texto.substring(0, texto.length() - 1).concat("a");
     }
     
-    private String procesaTexto(String textoAConvertir, boolean eliminarTexto) {
+    private String procesaTexto(String textoAConvertir, boolean eliminarTexto, boolean esNumeroEntero) {
         for (String juntarCiento : juntarCientos) {
             if (textoAConvertir.contains(juntarCiento)) 
                 textoAConvertir = textoAConvertir.replace(juntarCiento, juntarCiento.replace(" ", ""));
         }
 
-        if(eliminarTexto)
-            for (String eliminaTexto1 : eliminaTexto) 
-                textoAConvertir = textoAConvertir.replace(" " + eliminaTexto1 + " ", " ");
+        if(eliminarTexto) {
+        	textoAConvertir = " ".concat(textoAConvertir).concat(" ");
+            for (String palabraNoDeterminante : palabrasNoDeterminantes) { 
+                textoAConvertir = textoAConvertir.replace(" " + palabraNoDeterminante + " ", " ");
+                textoAConvertir = textoAConvertir.replace(" " + quitaTildes(palabraNoDeterminante) + " ", " ");
+            }
+        }
         
-        return textoAConvertir;
+        if(esNumeroEntero)
+        	textoAConvertir = textoAConvertir.replace(".", "").replace(",", "");
+        
+        return textoAConvertir.trim();
     }
     
     private int detectaDecimalesMoneda(String textoDetectar) {
@@ -953,9 +1062,8 @@ public class TextoNumero extends Op {
         for(int a = 0; a < texto.size(); a++)
             texto.set(a, quitaTildes(texto.get(a), true));
         
-        textoDetectar = procesaTexto(textoDetectar, false);
-
-        ArrayList<String> textos = new ArrayList<>(Arrays.asList(textoDetectar.split("\\s+")));                
+        textoDetectar = procesaTexto(textoDetectar, false, false);
+        ArrayList<String> textos = new ArrayList<>(Arrays.asList(textoDetectar.split("\\s+")));
         
         for(int a = textos.size() - 1; a >= 0; a--) {            
             int donde = texto.indexOf(textos.get(a));
@@ -978,6 +1086,39 @@ public class TextoNumero extends Op {
         }
         
         return dondeSeparadorDecimales;
-    }    
+    }
+        
+    private String redondea(BigDecimal valor) {    	
+    	BigDecimal parteDecimal = valor.remainder(BigDecimal.ONE);    	
+    	int redondeoDecimalesTmp = esMoneda ? redondeoDecimales : Math.min(parteDecimal.toString().length() - 2, redondeoDecimales);
+    	valor = valor.setScale(redondeoDecimalesTmp, RoundingMode.HALF_UP);
+    	return valor.toString().concat(esMonedaSimbolo ? " ".concat(tipoMonedaSimbolo) : "");
+    }
+    
+    private ArrayList<String> getListaMonedas(boolean soloEnteros) {
+    	ArrayList<String> monedaListTmp = new ArrayList<>();
+    	
+    	if(esMoneda) {
+    		ArrayList<String> monedasList = new ArrayList<>(Arrays.asList(new String[]{tipoMonedaEnteros, tipoMonedaEnterosPlural, tipoMonedaSimbolo}));
+    		if(!soloEnteros)
+    			monedasList.addAll(new ArrayList<>(Arrays.asList(new String[]{tipoMonedaCentimos, tipoMonedaCentimosPlural})));
+    			
+    		for(int a = 0; a < 2; a++) {
+    			for(String monedaList : monedasList) {
+    				if(!monedaList.equals("")) {
+		    			if(a == 0)
+		    				monedaListTmp.add(monedaList);
+		    			else {
+		    				String[] tipoMonedaEnterosArray = monedaList.split("\\s+");
+		    	    		for(String tipoMonedaEntero : tipoMonedaEnterosArray) 
+		    	    			monedaListTmp.add(quitaTildes(tipoMonedaEntero));
+		    			}
+    				}
+    			}
+    		}
+    	}
+    	    	
+    	return monedaListTmp;
+    }
     
 }
